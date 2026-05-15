@@ -1,0 +1,27 @@
+import type { RouteRecordRaw } from 'vue-router'
+
+const blogRoutes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    component: () => import('@/layouts/BlogLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: '主页',
+        component: () => import('@/pages/blog/HomePage.vue'),
+      },
+      {
+        path: 'posts',
+        name: '文章列表',
+        component: () => import('@/pages/blog/PostListPage.vue'),
+      },
+      {
+        path: 'posts/:id',
+        name: '文章详情',
+        component: () => import('@/pages/blog/PostDetailPage.vue'),
+      },
+    ],
+  },
+]
+
+export default blogRoutes

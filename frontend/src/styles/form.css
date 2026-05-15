@@ -1,0 +1,125 @@
+/* 通用表单样式 — 供登录、注册、个人信息等页面复用 */
+
+.form-card {
+  width: 420px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 36px 32px;
+  margin: 0 auto;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.4em;
+  color: var(--text-strong);
+  margin: 0 0 20px;
+}
+
+.form-error {
+  background: rgba(255, 76, 76, 0.1);
+  border: 1px solid rgba(255, 76, 76, 0.3);
+  color: #ff4c4c;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+  margin-bottom: 16px;
+}
+
+.form-success {
+  background: rgba(76, 217, 100, 0.1);
+  border: 1px solid rgba(76, 217, 100, 0.3);
+  color: #3a9d4a;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+  margin-bottom: 16px;
+}
+
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-body--compact {
+  gap: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 0.9em;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.form-field input,
+.form-field textarea {
+  padding: 10px 14px;
+  border: var(--card-border);
+  border-radius: var(--radius-sm);
+  background: var(--page-bg);
+  color: var(--text-main);
+  font-size: 0.95em;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: var(--accent);
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.field-error {
+  font-size: 0.82em;
+  color: #ff4c4c;
+}
+
+.form-submit {
+  margin-top: 4px;
+  padding: 10px 0;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.form-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.form-section-title {
+  font-size: 1.1em;
+  color: var(--text-strong);
+  margin: 0 0 16px;
+}
