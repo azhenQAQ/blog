@@ -2,6 +2,7 @@
 import NavBar from '@/components/blog/NavBar.vue'
 import SideBar from '@/components/blog/SideBar.vue'
 import ParticleBg from '@/components/blog/ParticleBg.vue'
+import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
 </script>
 
 <template>
@@ -16,6 +17,7 @@ import ParticleBg from '@/components/blog/ParticleBg.vue'
         <SideBar />
       </aside>
     </div>
+    <FloatingToolbar />
   </div>
 </template>
 

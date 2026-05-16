@@ -7,12 +7,13 @@ USE `blog`;
 
 -- ============================================================
 -- 由于存在外键约束，删除表时必须先删子表，再删父表
--- DROP 顺序: article_tag → article → friend_link → tag → user
--- CREATE 顺序相反: user → tag → friend_link → article → article_tag
+-- DROP 顺序: article_tag → article → attachment → friend_link → tag → user
+-- CREATE 顺序相反: user → tag → friend_link → attachment → article → article_tag
 -- ============================================================
 
 DROP TABLE IF EXISTS `article_tag`;
 DROP TABLE IF EXISTS `article`;
+DROP TABLE IF EXISTS `attachment`;
 DROP TABLE IF EXISTS `friend_link`;
 DROP TABLE IF EXISTS `tag`;
 DROP TABLE IF EXISTS `user`;
@@ -69,7 +70,29 @@ CREATE TABLE IF NOT EXISTS `friend_link` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='友链表';
 
 -- -----------------------------------------------------------
--- 4. 文章表 (article)
+-- 4. 附件表 (attachment)
+-- -----------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `attachment` (
+    `id`             BIGINT       NOT NULL AUTO_INCREMENT  COMMENT '主键',
+    `user_id`        BIGINT       NOT NULL                 COMMENT '上传者ID',
+    `original_name`  VARCHAR(255) NOT NULL                 COMMENT '原始文件名',
+    `stored_name`    VARCHAR(255) NOT NULL                 COMMENT '存储文件名(UUID)',
+    `stored_path`    VARCHAR(500) NOT NULL                 COMMENT '存储相对路径',
+    `thumbnail_path` VARCHAR(500) DEFAULT NULL             COMMENT '缩略图相对路径',
+    `file_size`      BIGINT       NOT NULL                 COMMENT '文件大小(字节)',
+    `file_type`      VARCHAR(100) NOT NULL                 COMMENT 'MIME类型',
+    `file_ext`       VARCHAR(20)  DEFAULT NULL             COMMENT '文件扩展名',
+    `created_at`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at`     DATETIME     DEFAULT NULL             COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    INDEX `idx_user_id` (`user_id`),
+    INDEX `idx_file_ext` (`file_ext`),
+    INDEX `idx_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='附件表';
+
+-- -----------------------------------------------------------
+-- 5. 文章表 (article)
 -- -----------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `article` (
     `id`           BIGINT       NOT NULL AUTO_INCREMENT  COMMENT '文章ID',
@@ -92,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `article` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章表';
 
 -- -----------------------------------------------------------
--- 5. 文章-标签关联表 (article_tag) - 多对多关系
+-- 6. 文章-标签关联表 (article_tag) - 多对多关系
 -- -----------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `article_tag` (
     `id`          BIGINT   NOT NULL AUTO_INCREMENT  COMMENT '关联ID',

@@ -37,3 +37,4 @@ application-local.yml
 application-prod.yml
 tmp
 app.log
+uploads

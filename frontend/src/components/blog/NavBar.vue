@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -20,27 +20,6 @@ function navigate(path: string) {
   menuOpen.value = false
 }
 
-const isDark = ref(document.documentElement.getAttribute('data-theme') !== 'light')
-
-function toggleTheme() {
-  isDark.value = !isDark.value
-  document.documentElement.dataset.theme = isDark.value ? 'dark' : 'light'
-}
-
-// 监听系统主题变化
-const mediaQuery = globalThis.matchMedia('(prefers-color-scheme: dark)')
-
-function handleSystemThemeChange(e: MediaQueryListEvent) {
-  isDark.value = e.matches
-  document.documentElement.dataset.theme = e.matches ? 'dark' : 'light'
-}
-
-mediaQuery.addEventListener('change', handleSystemThemeChange)
-
-onUnmounted(() => {
-  mediaQuery.removeEventListener('change', handleSystemThemeChange)
-})
-
 </script>
 
 <template>
@@ -60,11 +39,6 @@ onUnmounted(() => {
       </div>
 
       <div class="nav-actions">
-        <button class="theme-toggle" @click="toggleTheme" :title="isDark ? '切换亮色' : '切换暗色'">
-          <span v-if="isDark">☀</span>
-          <span v-else>☾</span>
-        </button>
-
         <button class="menu-toggle" @click="menuOpen = !menuOpen">
           <span></span>
           <span></span>
@@ -150,26 +124,6 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.theme-toggle {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  border-radius: 50%;
-  font-size: 1.1em;
-  cursor: pointer;
-  color: var(--text-main);
-  transition: background 0.2s;
-}
-
-.theme-toggle:hover {
-  background: var(--accent-bg);
-  color: var(--accent);
 }
 
 .menu-toggle {

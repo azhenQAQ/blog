@@ -30,6 +30,12 @@ const adminRoutes: RouteRecordRaw[] = [
         component: () => import('@/pages/admin/CommentManagePage.vue'),
         meta: { requiresAuth: true, requiredRole: 'admin' },
       },
+      {
+        path: 'attachments',
+        name: '附件库',
+        component: () => import('@/pages/admin/AttachmentManagePage.vue'),
+        meta: { requiresAuth: true, requiredRole: 'admin' },
+      },
     ],
   },
 ]
