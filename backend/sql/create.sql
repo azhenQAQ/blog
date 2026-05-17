@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `article` (
     `content`      LONGTEXT     NOT NULL                  COMMENT '文章内容(Markdown)',
     `summary`      VARCHAR(500) DEFAULT NULL              COMMENT '文章摘要',
     `cover_image`  VARCHAR(255) DEFAULT NULL              COMMENT '封面图片URL',
-    `status`       TINYINT      NOT NULL DEFAULT 0        COMMENT '状态: 1已发布 0草稿',
+    `status`       TINYINT      NOT NULL DEFAULT 0        COMMENT '0=草稿 1=已发布 2=已归档',
     `is_top`       TINYINT      NOT NULL DEFAULT 0        COMMENT '是否置顶: 1是 0否',
     `view_count`   INT          NOT NULL DEFAULT 0        COMMENT '浏览量',
     `user_id`      BIGINT       NOT NULL                  COMMENT '作者ID',

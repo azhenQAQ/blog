@@ -15,8 +15,10 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.3.18",
     "axios": "^1.16.0",
     "element-plus": "^2.14.0",
+    "highlight.js": "^11.11.1",
     "pinia": "^3.0.4",
     "vue": "^3.5.32",
     "vue-router": "^5.0.4"
