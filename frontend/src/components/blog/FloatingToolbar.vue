@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useThemeStore } from '@/stores/theme'
+import { useUserStore } from '@/stores/user'
+import { useConfirm } from '@/composables/useConfirm'
+import { useSnackbar } from '@/composables/useSnackbar'
 
 const themeStore = useThemeStore()
+const userStore = useUserStore()
+const { showConfirm } = useConfirm()
+const { showMessage } = useSnackbar()
 
 const expanded = ref(false)
 const toolbarRef = ref<HTMLElement | null>(null)
@@ -56,6 +62,22 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+async function handleLogout() {
+  const confirmed = await showConfirm({
+    title: '退出登录',
+    message: '确定退出当前账号吗？',
+  })
+  if (!confirmed) return
+
+  try {
+    await userStore.logout()
+    showMessage({ type: 'success', message: '退出成功' })
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : '退出失败，请重试'
+    showMessage({ type: 'error', message: msg })
+  }
+}
+
 onMounted(() => {
   document.addEventListener('click', onDocumentClick)
   showBackToTop.value = window.scrollY > 300
@@ -89,6 +111,14 @@ onUnmounted(() => {
           :src="themeStore.isDark ? '/images/day-mode.png' : '/images/night-mode.png'"
           alt="主题切换"
         />
+      </button>
+      <button
+        v-if="userStore.isLogin"
+        class="tool-btn"
+        title="退出登录"
+        @click="handleLogout"
+      >
+        ⏻
       </button>
     </div>
     <button class="trigger-btn" @click="toggleExpand" title="展开工具栏">

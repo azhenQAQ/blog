@@ -3,6 +3,8 @@ import NavBar from '@/components/blog/NavBar.vue'
 import SideBar from '@/components/blog/SideBar.vue'
 import ParticleBg from '@/components/blog/ParticleBg.vue'
 import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
+import SnackbarContainer from '@/components/blog/SnackbarContainer.vue'
+import ConfirmDialog from '@/components/blog/ConfirmDialog.vue'
 </script>
 
 <template>
@@ -20,6 +22,8 @@ import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
       </aside>
     </div>
     <FloatingToolbar />
+    <SnackbarContainer />
+    <ConfirmDialog />
   </div>
 </template>
 
