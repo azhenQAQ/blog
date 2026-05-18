@@ -4,20 +4,34 @@ import { listPublicTags } from '@/api/modules/tag'
 import type { TagVO } from '@/types/tag'
 
 const author = {
-  name: '山岳',
-  bio: '一只会敲代码的猫',
-  avatar: '',
-  stats: { posts: 42, tags: 18, categories: 6 },
+  name: '阿臻',
+  avatar: '/images/author-avatar.jpg',
+  stats: { 文章: 42, 标签: 18, 留言: 128 },
+}
+
+const bio = ref('正在加载中。。。')
+
+async function fetchBio() {
+  try {
+    const res = await fetch('https://api.suyanw.cn/api/gushi.php?type=json')
+    const data = await res.json()
+    if (data.text) {
+      bio.value = data.text
+    }
+  } catch {
+    // 静默失败，保留默认 bio
+  }
 }
 
 const tags = ref<TagVO[]>([])
 
-onMounted(async () => {
-  try {
-    tags.value = await listPublicTags()
-  } catch {
-    // 静默失败
-  }
+onMounted(() => {
+  fetchBio()
+  listPublicTags()
+    .then((data) => {
+      tags.value = data
+    })
+    .catch(() => {})
 })
 
 const info = {
@@ -32,13 +46,13 @@ const activeTab = ref<'tags' | 'info'>('tags')
   <aside class="sidebar">
     <!-- 作者卡片 -->
     <div class="card author-card">
-      <div class="author-bg" />
       <div class="author-info">
         <div class="avatar">
-          <span>{{ author.name[0] }}</span>
+          <img v-if="author.avatar" :src="author.avatar" :alt="author.name" />
+          <span v-else>{{ author.name[0] }}</span>
         </div>
         <h3 class="author-name">{{ author.name }}</h3>
-        <p class="author-bio">{{ author.bio }}</p>
+        <p class="author-bio">{{ bio }}</p>
         <div class="author-stats">
           <div v-for="(val, key) in author.stats" :key="key" class="stat">
             <span class="stat-val">{{ val }}</span>
@@ -51,22 +65,16 @@ const activeTab = ref<'tags' | 'info'>('tags')
     <!-- 公告 -->
     <div class="card announcement">
       <h4 class="card-title">公告</h4>
-      <p>欢迎来到废话回收站，把想说的都倒在这里喵～</p>
+      <p>欢迎来到废话回收站，把想说的都倒在这里喵ovo～</p>
     </div>
 
     <!-- 标签 & 网站资讯（Tab 切换） -->
     <div class="card info-card">
       <div class="tab-header">
-        <button
-          :class="['tab-btn', { active: activeTab === 'tags' }]"
-          @click="activeTab = 'tags'"
-        >
+        <button :class="['tab-btn', { active: activeTab === 'tags' }]" @click="activeTab = 'tags'">
           标签
         </button>
-        <button
-          :class="['tab-btn', { active: activeTab === 'info' }]"
-          @click="activeTab = 'info'"
-        >
+        <button :class="['tab-btn', { active: activeTab === 'info' }]" @click="activeTab = 'info'">
           资讯
         </button>
       </div>
@@ -99,7 +107,7 @@ const activeTab = ref<'tags' | 'info'>('tags')
   background: var(--card-bg);
   border: var(--card-border);
   box-shadow: var(--card-shadow);
-  padding: 20px;
+  padding: 15px;
 }
 
 .card-title {
@@ -107,7 +115,7 @@ const activeTab = ref<'tags' | 'info'>('tags')
   font-size: 1.05em;
   font-weight: 700;
   color: var(--text-strong);
-  margin: 0 0 12px;
+  margin: 0 0 5px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -116,26 +124,22 @@ const activeTab = ref<'tags' | 'info'>('tags')
 .author-card {
   padding: 0;
   overflow: hidden;
-}
-
-.author-bg {
-  height: 80px;
-  background: var(--accent-yellow);
-}
-
-[data-theme='dark'] .author-bg {
-  background: var(--accent);
+  background:
+    linear-gradient(to bottom, transparent 10%, var(--card-bg) 100%),
+    url('/images/author-background.jpg') center/cover no-repeat;
+  background-size:
+    100% auto,
+    cover;
 }
 
 .author-info {
-  padding: 0 20px 20px;
-  margin-top: -40px;
+  padding: 40px 20px 5px;
   text-align: center;
 }
 
 .avatar {
-  width: 64px;
-  height: 64px;
+  width: 70px;
+  height: 70px;
   background: #1a1a1a;
   color: #fff;
   display: flex;
@@ -144,8 +148,16 @@ const activeTab = ref<'tags' | 'info'>('tags')
   font-family: var(--font-heading);
   font-size: 1.6em;
   font-weight: 700;
-  margin: 0 auto 10px;
+  margin: 0 auto 0px;
   border: 3px solid var(--card-bg);
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .author-name {
@@ -160,15 +172,14 @@ const activeTab = ref<'tags' | 'info'>('tags')
 
 .author-bio {
   margin: 0 0 14px;
-  font-size: 0.85em;
-  color: var(--text-muted);
+  font-size: 0.95em;
+  color: var(--text-main);
 }
 
 .author-stats {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  padding-top: 14px;
+  gap: 32px;
   border-top: 3px solid var(--shadow-color);
 }
 
@@ -186,8 +197,8 @@ const activeTab = ref<'tags' | 'info'>('tags')
 }
 
 .stat-label {
-  font-size: 0.72em;
-  color: var(--text-muted);
+  font-size: 0.85em;
+  color: var(--text-main);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

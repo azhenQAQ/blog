@@ -10,6 +10,7 @@ const navbarRef = ref<HTMLElement | null>(null)
 const navItems = [
   { label: '主页', path: '/' },
   { label: '留言板', path: '/guestbook' },
+  { label: '奇思妙想', path: '/tools' },
 ]
 
 const isActive = (path: string) => route.path === path

@@ -43,7 +43,7 @@ img {
   --accent-strong: #e64a19;
   --accent-secondary: #00bcd4;
   --accent-yellow: #ffd600;
-  --text-muted: #888;
+  --text-muted: #666;
   --nav-height: 60px;
   --content-max-width: 1350px;
   --sidebar-width: 26%;
@@ -68,7 +68,7 @@ img {
   --shadow-color: #1a1a1a;
   --text-main: #2a2a2a;
   --text-strong: #000000;
-  --text-muted: #777;
+  --text-muted: #5a5a5a;
   --nav-bg: #f4f0e6;
   --nav-shadow: none;
   --nav-border: 0 0 3px 0 #1a1a1a;
@@ -87,7 +87,7 @@ img {
   --shadow-color: #555;
   --text-main: #d0d0d0;
   --text-strong: #ffffff;
-  --text-muted: #999;
+  --text-muted: #7a7a7a;
   --nav-bg: #111111;
   --nav-shadow: none;
   --nav-border: 0 0 3px 0 #555;

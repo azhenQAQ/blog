@@ -8,6 +8,12 @@ const routes: RouteRecordRaw[] = [
   ...blogRoutes,
   ...adminRoutes,
   {
+    path: '/tools/image-process',
+    name: '图片处理',
+    component: () => import('@/pages/tools/ImageProcessPage.vue'),
+    meta: { title: '图片处理' },
+  },
+  {
     path: '/login',
     name: '登录',
     component: () => import('@/pages/blog/LoginPage.vue'),
@@ -24,8 +30,13 @@ const router = createRouter({
   routes,
 })
 
+const SITE_NAME = '废话回收站'
+
 router.beforeEach((to, _from, next) => {
   const userStore = useUserStore()
+
+  const pageTitle = to.meta?.title as string | undefined
+  document.title = pageTitle ? `${pageTitle} - ${SITE_NAME}` : SITE_NAME
 
   const requiresAuth = to.matched.some((r) => r.meta?.requiresAuth === true)
   const requiredRole = to.matched.find((r) => r.meta?.requiredRole)?.meta?.requiredRole as
