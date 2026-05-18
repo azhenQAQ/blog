@@ -43,6 +43,7 @@ src/
   - 入口初始化时检测系统偏好
   - NavBar 提供切换按钮 + 监听系统主题变化
   - `theme.css` 定义所有博客专用主题变量（页面背景、卡片、文字、边框等）
+  - 完整设计系统文档见 [docs/blog-design-system.md](docs/blog-design-system.md)（布局、色彩、字体、组件风格、动效规范）
 - **admin 管理端**：使用 Element Plus 内置 CSS 变量体系（`--el-*`），暗色模式由 Element Plus 自动适配
 
 ### 命名规范
@@ -52,6 +53,11 @@ src/
 - 页面文件使用 PascalCase 并以 `Page` 后缀
 - `<script setup lang="ts">` 是标准写法
 - 路径别名 `@` → `./src`
+
+### 布局规范
+
+- **blog 端页面禁止单独设置 `max-width`**，内容宽度由 BlogLayout 的 `.main-container` 统一控制（桌面端 `max-width: var(--content-max-width)`，移动端自适应）
+- 页面组件只需关注自身内容的排列，无需包裹多余的宽度容器
 
 ### 代码风格
 

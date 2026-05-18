@@ -11,6 +11,7 @@ import com.blog.backend.model.vo.article.ArticleDetailVO;
 import com.blog.backend.model.vo.article.ArticleVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ArticleService extends IService<Article> {
 
@@ -63,4 +64,24 @@ public interface ArticleService extends IService<Article> {
      * 获取查询条件
      */
     QueryWrapper<Article> getQueryWrapper(ArticleQueryRequest request);
+
+    /**
+     * 公开分页查询已发布非置顶文章
+     */
+    Page<ArticleVO> listPublicByPage(long current, long size);
+
+    /**
+     * 查询所有已发布置顶文章
+     */
+    List<ArticleVO> listTopArticles();
+
+    /**
+     * 获取公开文章详情（仅已发布），递增浏览量
+     */
+    ArticleDetailVO getPublicArticleDetail(Long id);
+
+    /**
+     * 获取相邻文章（上一篇/下一篇）
+     */
+    Map<String, ArticleVO> getAdjacentArticles(Long id);
 }

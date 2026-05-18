@@ -37,48 +37,92 @@ img {
 }
 
 :root {
-  --radius-card: 8px;
-  --radius-sm: 4px;
-  --accent: #49b1f5;
-  --accent-strong: #0084ff;
-  --text-muted: #858585;
+  --radius-card: 0px;
+  --radius-sm: 0px;
+  --accent: #ff5722;
+  --accent-strong: #e64a19;
+  --accent-secondary: #00bcd4;
+  --accent-yellow: #ffd600;
+  --text-muted: #888;
   --nav-height: 60px;
   --content-max-width: 1350px;
   --sidebar-width: 26%;
   --sidebar-min-width: 260px;
   --sidebar-max-width: 290px;
-  --font-main: PingFang, 'JetBrains Mono', sans-serif;
+  --font-heading: 'Oswald', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-main: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
   --font-size: 16px;
-  --line-height: 2;
-  --card-transition: all 0.3s;
+  --line-height: 1.8;
+  --card-transition: all 0.12s ease;
+  --border-thick: 3px solid var(--shadow-color);
 }
 
+/* ====== Light: 新闻纸 × 粗野印刷 ====== */
 [data-theme='light'] {
-  --page-bg: #f7f9fe;
+  --page-bg: #f4f0e6;
   --card-bg: #ffffff;
-  --card-border: 1px solid #d5d8ec;
-  --card-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.05);
-  --card-hover-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.09);
-  --text-main: #4c4948;
-  --text-strong: #1f2d3d;
-  --text-muted: #858585;
-  --nav-bg: rgba(255, 255, 255, 0.85);
-  --nav-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --border-color: #e3e8f7;
-  --accent-bg: rgba(73, 177, 245, 0.08);
+  --card-border: 3px solid #1a1a1a;
+  --card-shadow: 6px 6px 0 #1a1a1a;
+  --card-hover-shadow: 8px 8px 0 #1a1a1a;
+  --shadow-color: #1a1a1a;
+  --text-main: #2a2a2a;
+  --text-strong: #000000;
+  --text-muted: #777;
+  --nav-bg: #f4f0e6;
+  --nav-shadow: none;
+  --nav-border: 0 0 3px 0 #1a1a1a;
+  --border-color: #1a1a1a;
+  --accent-bg: #ffd600;
+  --accent-bg-alt: #00bcd4;
 }
 
+/* ====== Dark: 暗色印刷车间 ====== */
 [data-theme='dark'] {
-  --page-bg: #0d0d0d;
-  --card-bg: #121212;
-  --card-border: 1px solid #42444a;
-  --card-shadow: none;
-  --card-hover-shadow: 0 3px 8px 6px rgba(0, 0, 0, 0.35);
-  --text-main: rgba(255, 255, 255, 0.7);
-  --text-strong: rgba(255, 255, 255, 0.9);
-  --text-muted: #858585;
-  --nav-bg: rgba(13, 13, 13, 0.85);
-  --nav-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  --border-color: #42444a;
-  --accent-bg: rgba(0, 132, 255, 0.1);
+  --page-bg: #111111;
+  --card-bg: #1a1a1a;
+  --card-border: 3px solid #555;
+  --card-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+  --card-hover-shadow: 8px 8px 0 rgba(0, 0, 0, 0.6);
+  --shadow-color: #555;
+  --text-main: #d0d0d0;
+  --text-strong: #ffffff;
+  --text-muted: #999;
+  --nav-bg: #111111;
+  --nav-shadow: none;
+  --nav-border: 0 0 3px 0 #555;
+  --border-color: #555;
+  --accent-bg: rgba(255, 215, 0, 0.2);
+  --accent-bg-alt: rgba(0, 188, 212, 0.2);
+}
+
+/* 全局滚动条 */
+html {
+  scrollbar-width: thin;
+}
+
+[data-theme='light'] html {
+  scrollbar-color: #1a1a1a #f4f0e6;
+}
+
+[data-theme='dark'] html {
+  scrollbar-color: #555 #111;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--page-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--shadow-color);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }

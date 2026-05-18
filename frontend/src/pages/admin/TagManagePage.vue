@@ -4,6 +4,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { listTagByPage, addTag, updateTag, deleteTag } from '@/api/modules/tag'
 import type { TagVO, TagQueryRequest } from '@/types/tag'
 
+defineOptions({ name: 'TagManagePage' })
+
 const loading = ref(false)
 const tagList = ref<TagVO[]>([])
 const total = ref(0)

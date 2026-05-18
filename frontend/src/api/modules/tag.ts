@@ -31,3 +31,8 @@ export function listAllTags(): Promise<TagVO[]> {
 export function getTag(id: number): Promise<TagVO> {
   return request.get(`/tag/${id}`) as Promise<TagVO>
 }
+
+/** 获取所有标签（公开） */
+export function listPublicTags(): Promise<TagVO[]> {
+  return request.get('/tag/public/list') as Promise<TagVO[]>
+}

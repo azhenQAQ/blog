@@ -7,7 +7,6 @@
   overflow-y: auto;
   background: var(--card-bg);
   border: var(--card-border);
-  border-radius: 12px;
   box-shadow: var(--card-shadow);
   padding: 36px 32px;
   margin: 0 auto;
@@ -15,29 +14,33 @@
 
 .form-title {
   text-align: center;
+  font-family: var(--font-heading);
   font-size: 1.4em;
+  font-weight: 700;
   color: var(--text-strong);
   margin: 0 0 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .form-error {
   background: rgba(255, 76, 76, 0.1);
-  border: 1px solid rgba(255, 76, 76, 0.3);
+  border: 3px solid #ff4c4c;
   color: #ff4c4c;
   padding: 10px 14px;
-  border-radius: var(--radius-sm);
   font-size: 0.9em;
   margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .form-success {
   background: rgba(76, 217, 100, 0.1);
-  border: 1px solid rgba(76, 217, 100, 0.3);
+  border: 3px solid #3a9d4a;
   color: #3a9d4a;
   padding: 10px 14px;
-  border-radius: var(--radius-sm);
   font-size: 0.9em;
   margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .form-body {
@@ -65,13 +68,12 @@
 .form-field input,
 .form-field textarea {
   padding: 10px 14px;
-  border: var(--card-border);
-  border-radius: var(--radius-sm);
+  border: 3px solid var(--shadow-color);
   background: var(--page-bg);
   color: var(--text-main);
   font-size: 0.95em;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.1s ease;
   font-family: inherit;
 }
 
@@ -88,38 +90,54 @@
 .field-error {
   font-size: 0.82em;
   color: #ff4c4c;
+  font-weight: 600;
 }
 
 .form-submit {
   margin-top: 4px;
   padding: 10px 0;
-  background: var(--accent);
+  background: #1a1a1a;
   color: #fff;
-  border: none;
-  border-radius: var(--radius-sm);
+  border: 3px solid #1a1a1a;
+  font-family: var(--font-heading);
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  transition: opacity 0.2s;
+  box-shadow: 4px 4px 0 var(--accent-yellow);
+  transition: all 0.1s ease;
 }
 
 .form-submit:hover:not(:disabled) {
-  opacity: 0.9;
+  box-shadow: 2px 2px 0 var(--accent-yellow);
+  transform: translate(2px, 2px);
+}
+
+[data-theme='dark'] .form-submit {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 4px 4px 0 rgba(255, 87, 34, 0.3);
 }
 
 .form-submit:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
+  transform: none;
 }
 
 .form-section {
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid var(--border-color);
+  border-top: 3px solid var(--shadow-color);
 }
 
 .form-section-title {
+  font-family: var(--font-heading);
   font-size: 1.1em;
+  font-weight: 700;
   color: var(--text-strong);
   margin: 0 0 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }

@@ -5,6 +5,7 @@ import type {
   ArticleAddRequest,
   ArticleEditRequest,
   ArticleQueryRequest,
+  AdjacentResult,
 } from '@/types/article'
 import type { PageResult } from '@/types/api'
 
@@ -43,4 +44,29 @@ export function restoreArticle(id: number): Promise<boolean> {
 /** 永久删除文章 */
 export function permanentDeleteArticle(id: number): Promise<boolean> {
   return request.delete(`/article/permanent/${id}`) as Promise<boolean>
+}
+
+/** 获取置顶文章列表（公开） */
+export function listPublicTopArticles(): Promise<ArticleVO[]> {
+  return request.get('/article/public/top') as Promise<ArticleVO[]>
+}
+
+/** 公开分页查询文章列表 */
+export function listPublicArticleByPage(
+  current: number,
+  pageSize: number,
+): Promise<PageResult<ArticleVO>> {
+  return request.get('/article/public/list', {
+    params: { current, pageSize },
+  }) as Promise<PageResult<ArticleVO>>
+}
+
+/** 获取公开文章详情 */
+export function getPublicArticle(id: number): Promise<ArticleDetailVO> {
+  return request.get(`/article/public/${id}`) as Promise<ArticleDetailVO>
+}
+
+/** 获取相邻文章（公开） */
+export function getAdjacentArticles(id: number): Promise<AdjacentResult> {
+  return request.get(`/article/public/${id}/adjacent`) as Promise<AdjacentResult>
 }

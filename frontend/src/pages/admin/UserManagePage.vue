@@ -5,6 +5,8 @@ import { listUserByPage } from '@/api/modules/user'
 import { isAdmin } from '@/enums/userRole'
 import type { UserVO, UserQueryRequest } from '@/types/user'
 
+defineOptions({ name: 'UserManagePage' })
+
 const loading = ref(false)
 const userList = ref<UserVO[]>([])
 const total = ref(0)

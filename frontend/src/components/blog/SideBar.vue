@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { listPublicTags } from '@/api/modules/tag'
+import type { TagVO } from '@/types/tag'
+
 const author = {
   name: '山岳',
   bio: '一只会敲代码的猫',
@@ -6,15 +10,22 @@ const author = {
   stats: { posts: 42, tags: 18, categories: 6 },
 }
 
-const tags = [
-  'Vue.js', 'TypeScript', 'Node.js', 'CSS', 'Docker',
-  'Go', 'Rust', '数据库', 'DevOps', '算法',
-]
+const tags = ref<TagVO[]>([])
+
+onMounted(async () => {
+  try {
+    tags.value = await listPublicTags()
+  } catch {
+    // 静默失败
+  }
+})
 
 const info = {
- 运行天数: 365,
- 访问量: '12.3k',
+  运行天数: 365,
+  访问量: '12.3k',
 }
+
+const activeTab = ref<'tags' | 'info'>('tags')
 </script>
 
 <template>
@@ -39,24 +50,39 @@ const info = {
 
     <!-- 公告 -->
     <div class="card announcement">
-      <h4 class="card-title">📢 公告</h4>
+      <h4 class="card-title">公告</h4>
       <p>欢迎来到废话回收站，把想说的都倒在这里喵～</p>
     </div>
 
-    <!-- 标签云 -->
-    <div class="card tag-cloud">
-      <h4 class="card-title">🏷 标签</h4>
-      <div class="tags">
-        <span v-for="tag in tags" :key="tag" class="tag">{{ tag }}</span>
+    <!-- 标签 & 网站资讯（Tab 切换） -->
+    <div class="card info-card">
+      <div class="tab-header">
+        <button
+          :class="['tab-btn', { active: activeTab === 'tags' }]"
+          @click="activeTab = 'tags'"
+        >
+          标签
+        </button>
+        <button
+          :class="['tab-btn', { active: activeTab === 'info' }]"
+          @click="activeTab = 'info'"
+        >
+          资讯
+        </button>
       </div>
-    </div>
-
-    <!-- 网站资讯 -->
-    <div class="card site-info">
-      <h4 class="card-title">📊 网站资讯</h4>
-      <div v-for="(val, key) in info" :key="key" class="info-row">
-        <span class="info-label">{{ key }}</span>
-        <span class="info-val">{{ val }}</span>
+      <div class="tab-body">
+        <div v-show="activeTab === 'tags'" class="tags">
+          <span v-for="tag in tags" :key="tag.id" class="tag">
+            {{ tag.name }}
+            <small class="tag-count">{{ tag.articleCount }}</small>
+          </span>
+        </div>
+        <div v-show="activeTab === 'info'" class="info-list">
+          <div v-for="(val, key) in info" :key="key" class="info-row">
+            <span class="info-label">{{ key }}</span>
+            <span class="info-val">{{ val }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </aside>
@@ -66,26 +92,24 @@ const info = {
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .card {
   background: var(--card-bg);
   border: var(--card-border);
-  border-radius: var(--radius-card);
-  padding: 20px;
   box-shadow: var(--card-shadow);
-  transition: var(--card-transition);
-}
-
-.card:hover {
-  box-shadow: var(--card-hover-shadow);
+  padding: 20px;
 }
 
 .card-title {
-  font-size: 1em;
+  font-family: var(--font-heading);
+  font-size: 1.05em;
+  font-weight: 700;
   color: var(--text-strong);
   margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* Author */
@@ -96,8 +120,11 @@ const info = {
 
 .author-bg {
   height: 80px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-  opacity: 0.7;
+  background: var(--accent-yellow);
+}
+
+[data-theme='dark'] .author-bg {
+  background: var(--accent);
 }
 
 .author-info {
@@ -109,12 +136,12 @@ const info = {
 .avatar {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
-  background: var(--accent);
+  background: #1a1a1a;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-heading);
   font-size: 1.6em;
   font-weight: 700;
   margin: 0 auto 10px;
@@ -123,8 +150,12 @@ const info = {
 
 .author-name {
   margin: 0 0 4px;
-  font-size: 1.15em;
+  font-family: var(--font-heading);
+  font-size: 1.2em;
+  font-weight: 700;
   color: var(--text-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .author-bio {
@@ -138,7 +169,7 @@ const info = {
   justify-content: center;
   gap: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--border-color);
+  border-top: 3px solid var(--shadow-color);
 }
 
 .stat {
@@ -148,14 +179,17 @@ const info = {
 }
 
 .stat-val {
-  font-size: 1.1em;
+  font-family: var(--font-heading);
+  font-size: 1.2em;
   font-weight: 700;
   color: var(--text-strong);
 }
 
 .stat-label {
-  font-size: 0.75em;
+  font-size: 0.72em;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Announcement */
@@ -164,6 +198,59 @@ const info = {
   font-size: 0.9em;
   color: var(--text-main);
   line-height: 1.8;
+}
+
+/* Info card (标签 + 资讯 merged) */
+.info-card {
+  padding: 0;
+  max-height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-header {
+  display: flex;
+  border-bottom: 3px solid var(--shadow-color);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 8px;
+  font-family: var(--font-heading);
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.1s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+}
+
+.tab-btn.active {
+  color: #fff;
+  background: #1a1a1a;
+}
+
+[data-theme='dark'] .tab-btn.active {
+  background: var(--accent);
+}
+
+.tab-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  scrollbar-width: none;
+}
+
+.tab-body::-webkit-scrollbar {
+  display: none;
 }
 
 /* Tags */
@@ -177,36 +264,49 @@ const info = {
   display: inline-block;
   padding: 3px 10px;
   font-size: 0.78em;
-  color: var(--text-main);
-  background: var(--accent-bg);
-  border-radius: var(--radius-sm);
-  transition: var(--card-transition);
+  font-weight: 600;
+  color: #1a1a1a;
+  background: var(--accent-yellow);
+  transition: background 0.1s ease;
   cursor: default;
 }
 
+.tag-count {
+  margin-left: 3px;
+  font-size: 0.75em;
+  color: #666;
+}
+
 .tag:hover {
-  color: #fff;
   background: var(--accent);
+  color: #fff;
+}
+
+.tag:hover .tag-count {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Site info */
 .info-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
+  padding: 8px 0;
   font-size: 0.88em;
 }
 
 .info-row + .info-row {
-  border-top: 1px solid var(--border-color);
+  border-top: 2px solid var(--shadow-color);
 }
 
 .info-label {
   color: var(--text-muted);
+  font-weight: 600;
 }
 
 .info-val {
+  font-family: var(--font-heading);
   color: var(--text-strong);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.05em;
 }
 </style>

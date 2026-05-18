@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
 const menuOpen = ref(false)
+const navbarRef = ref<HTMLElement | null>(null)
 
 const navItems = [
   { label: '主页', path: '/' },
-  { label: '文章', path: '/posts' },
-  // { label: '留言板', path: '/posts' },
-  // { label: '友人帐', path: '/posts' },
+  { label: '留言板', path: '/guestbook' },
 ]
 
 const isActive = (path: string) => route.path === path
@@ -20,10 +19,19 @@ function navigate(path: string) {
   menuOpen.value = false
 }
 
+function onDocumentClick(e: MouseEvent) {
+  if (!menuOpen.value) return
+  if (navbarRef.value && !navbarRef.value.contains(e.target as Node)) {
+    menuOpen.value = false
+  }
+}
+
+onMounted(() => document.addEventListener('click', onDocumentClick))
+onUnmounted(() => document.removeEventListener('click', onDocumentClick))
 </script>
 
 <template>
-  <nav class="navbar">
+  <nav ref="navbarRef" class="navbar">
     <div class="nav-inner">
       <router-link to="/" class="nav-brand">废话回收站</router-link>
 
@@ -57,8 +65,7 @@ function navigate(path: string) {
   right: 0;
   height: var(--nav-height);
   background: var(--nav-bg);
-  box-shadow: var(--nav-shadow);
-  backdrop-filter: blur(8px);
+  border-bottom: 3px solid var(--shadow-color);
   z-index: 100;
 }
 
@@ -72,51 +79,47 @@ function navigate(path: string) {
 }
 
 .nav-brand {
-  font-size: 1.3em;
+  font-family: var(--font-heading);
+  font-size: 1.4em;
   font-weight: 700;
-  color: var(--text-strong);
   text-decoration: none;
   white-space: nowrap;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--accent-yellow);
+  color: #1a1a1a;
+  padding: 4px 12px;
+}
+
+[data-theme='dark'] .nav-brand {
+  color: #1a1a1a;
 }
 
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
   margin-left: 48px;
 }
 
 .nav-menu a {
   position: relative;
-  padding: 6px 14px;
+  padding: 8px 18px;
   color: var(--text-main);
   text-decoration: none;
-  font-size: 0.95em;
+  font-family: var(--font-heading);
+  font-size: 1em;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   cursor: pointer;
-  transition: color 0.2s;
-}
-
-.nav-menu a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 2px;
-  background: var(--accent);
-  transition: width 0.2s;
-  border-radius: 1px;
+  transition: background 0.1s ease, color 0.1s ease;
+  text-transform: uppercase;
 }
 
 .nav-menu a:hover,
 .nav-menu a.active {
-  color: var(--accent);
-}
-
-.nav-menu a:hover::after,
-.nav-menu a.active::after {
-  width: 60%;
+  background: var(--accent);
+  color: #fff;
 }
 
 .nav-actions {
@@ -131,7 +134,7 @@ function navigate(path: string) {
   flex-direction: column;
   gap: 4px;
   background: none;
-  border: none;
+  border: 2px solid var(--shadow-color);
   cursor: pointer;
   padding: 8px;
 }
@@ -139,10 +142,8 @@ function navigate(path: string) {
 .menu-toggle span {
   display: block;
   width: 20px;
-  height: 2px;
-  background: var(--text-main);
-  border-radius: 1px;
-  transition: all 0.2s;
+  height: 2.5px;
+  background: var(--shadow-color);
 }
 
 @media (max-width: 900px) {
@@ -154,9 +155,9 @@ function navigate(path: string) {
     right: 0;
     background: var(--card-bg);
     flex-direction: column;
-    padding: 12px;
-    box-shadow: var(--nav-shadow);
-    gap: 4px;
+    padding: 0;
+    border-bottom: 3px solid var(--shadow-color);
+    gap: 0;
   }
 
   .nav-menu.open {
@@ -164,13 +165,9 @@ function navigate(path: string) {
   }
 
   .nav-menu a {
-    padding: 12px 16px;
+    padding: 14px 20px;
     width: 100%;
-    border-radius: var(--radius-card);
-  }
-
-  .nav-menu a:hover {
-    background: var(--accent-bg);
+    border-bottom: 1px solid var(--border-color);
   }
 
   .menu-toggle {

@@ -1,122 +1,218 @@
 <script setup lang="ts">
-const heroTitle = '废话回收站'
+import { ref, computed, onMounted } from 'vue'
+import { listPublicTopArticles, listPublicArticleByPage } from '@/api/modules/article'
+import type { ArticleVO } from '@/types/article'
 
-const posts = [
-  {
-    id: 1,
-    title: '深入理解 Vue 3 响应式原理',
-    date: '2026-04-15',
-    category: '前端开发',
-    tags: ['Vue.js', '响应式'],
-    summary:
-      'Vue 3 的响应式系统基于 Proxy 实现，相比 Vue 2 的 Object.defineProperty 有着更好的性能和更完整的能力。本文从源码角度深入解析其实现机制...',
-  },
-  {
-    id: 2,
-    title: 'Rust 所有权系统详解',
-    date: '2026-04-08',
-    category: '编程语言',
-    tags: ['Rust'],
-    summary:
-      '所有权是 Rust 最独特的特性之一，它让 Rust 在不需要垃圾回收器的情况下保证内存安全。本文通过实际示例来理解所有权、借用和生命周期...',
-  },
-  {
-    id: 3,
-    title: '搭建个人 CI/CD 流水线',
-    date: '2026-03-28',
-    category: 'DevOps',
-    tags: ['Docker', 'CI/CD'],
-    summary:
-      '使用 GitHub Actions 配合 Docker 搭建一套轻量的 CI/CD 流水线，实现自动化测试、构建和部署，让代码提交到上线完全自动化...',
-  },
-  {
-    id: 4,
-    title: 'CSS Container Queries 实战指南',
-    date: '2026-03-18',
-    category: '前端开发',
-    tags: ['CSS'],
-    summary:
-      'Container Queries 让组件可以根据容器尺寸而非视口尺寸来调整样式，这是响应式设计的一次重要进化。本文通过实际案例来学习如何使用...',
-  },
-]
+const topArticles = ref<ArticleVO[]>([])
+const articles = ref<ArticleVO[]>([])
+const current = ref(1)
+const total = ref(0)
+const totalPages = ref(0)
+const pageSize = 10
+const loading = ref(false)
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
+}
+
+async function fetchData(page: number) {
+  loading.value = true
+  try {
+    const [topRes, pageRes] = await Promise.all([
+      listPublicTopArticles(),
+      listPublicArticleByPage(page, pageSize),
+    ])
+    topArticles.value = topRes
+    articles.value = pageRes.records
+    total.value = pageRes.total
+    totalPages.value = pageRes.pages
+    current.value = page
+  } catch {
+    // 静默处理，页面显示空状态
+  } finally {
+    loading.value = false
+  }
+}
+
+const visiblePages = computed(() => {
+  const pages: number[] = []
+  const tp = totalPages.value
+  if (tp <= 1) return pages
+  let start = Math.max(1, current.value - 2)
+  let end = Math.min(tp, start + 4)
+  if (end - start < 4) start = Math.max(1, end - 4)
+  for (let i = start; i <= end; i++) pages.push(i)
+  return pages
+})
+
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value || page === current.value) return
+  fetchData(page)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+onMounted(() => fetchData(1))
 </script>
 
 <template>
   <div class="home">
-    <!-- Hero -->
-    <section class="hero">
-      <h1 class="hero-title">{{ heroTitle }}</h1>
-    </section>
-
-    <!-- Post list -->
-    <section class="post-list">
-      <h1 class="section-title">最新文章</h1>
+    <!-- 置顶文章 -->
+    <section v-if="topArticles.length" class="post-list">
+      <h2 class="section-title">📌 置顶文章</h2>
       <article
-        v-for="(post, idx) in posts"
+        v-for="(post, idx) in topArticles"
         :key="post.id"
         class="post-card"
         :class="{ reverse: idx % 2 === 1 }"
       >
-        <div class="post-cover">
-          <div class="cover-placeholder">
-            <span>{{ post.category }}</span>
+        <router-link :to="`/posts/${post.id}`" class="post-card-link">
+          <div class="post-cover">
+            <img
+              v-if="post.coverImage"
+              :src="post.coverImage"
+              :alt="post.title"
+              class="cover-img"
+            />
+            <div v-else class="cover-placeholder">
+              <span>{{ post.title.slice(0, 1) }}</span>
+            </div>
           </div>
-        </div>
-        <div class="post-content">
-          <h2 class="post-title">{{ post.title }}</h2>
-          <div class="post-meta">
-            <span class="post-date">{{ post.date }}</span>
-            <span class="post-category">{{ post.category }}</span>
+          <div class="post-content">
+            <h3 class="post-title">{{ post.title }}</h3>
+            <div class="post-meta">
+              <span class="post-date">{{ formatDate(post.createdAt) }}</span>
+              <span v-if="post.authorName" class="post-author">{{ post.authorName }}</span>
+            </div>
+            <p class="post-summary">{{ post.summary || '暂无摘要' }}</p>
+            <div v-if="post.tags?.length" class="post-tags">
+              <span v-for="tag in post.tags" :key="tag.id" class="post-tag">{{ tag.name }}</span>
+            </div>
           </div>
-          <p class="post-summary">{{ post.summary }}</p>
-          <div class="post-tags">
-            <span v-for="tag in post.tags" :key="tag" class="post-tag">{{ tag }}</span>
-          </div>
-        </div>
+        </router-link>
       </article>
     </section>
+
+    <!-- 最新文章 -->
+    <section class="post-list">
+      <h2 class="section-title">最新文章</h2>
+
+      <div v-if="loading && !articles.length" class="loading-state">加载中...</div>
+
+      <template v-else-if="articles.length">
+        <article
+          v-for="(post, idx) in articles"
+          :key="post.id"
+          class="post-card"
+          :class="{ reverse: idx % 2 === 1 }"
+        >
+          <router-link :to="`/posts/${post.id}`" class="post-card-link">
+            <div class="post-cover">
+              <img
+                v-if="post.coverImage"
+                :src="post.coverImage"
+                :alt="post.title"
+                class="cover-img"
+              />
+              <div v-else class="cover-placeholder">
+                <span>{{ post.title.slice(0, 1) }}</span>
+              </div>
+            </div>
+            <div class="post-content">
+              <h3 class="post-title">{{ post.title }}</h3>
+              <div class="post-meta">
+                <span class="post-date">{{ formatDate(post.createdAt) }}</span>
+                <span v-if="post.authorName" class="post-author">{{ post.authorName }}</span>
+              </div>
+              <p class="post-summary">{{ post.summary || '暂无摘要' }}</p>
+              <div v-if="post.tags?.length" class="post-tags">
+                <span v-for="tag in post.tags" :key="tag.id" class="post-tag">{{ tag.name }}</span>
+              </div>
+            </div>
+          </router-link>
+        </article>
+      </template>
+
+      <div v-else-if="!loading" class="empty-state">暂无文章</div>
+    </section>
+
+    <!-- 分页 -->
+    <nav v-if="totalPages > 1" class="pagination">
+      <button :disabled="current <= 1" @click="goToPage(current - 1)">‹ 上一页</button>
+      <button
+        v-for="p in visiblePages"
+        :key="p"
+        :class="{ active: p === current }"
+        @click="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+      <button :disabled="current >= totalPages" @click="goToPage(current + 1)">下一页 ›</button>
+    </nav>
   </div>
 </template>
 
 <style scoped>
-/* Hero */
-.hero {
-  text-align: center;
-  padding: 24px 0;
-}
-
-.hero-title {
-  font-size: 5em;
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 1.4em;
   font-weight: 700;
   color: var(--text-strong);
-  margin: 0;
+  margin: 0 0 24px;
+  padding-left: 12px;
+  border-left: 6px solid var(--accent);
+  text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-/* Post list */
+/* Post card */
 .post-card {
   display: flex;
   height: 18em;
   background: var(--card-bg);
   border: var(--card-border);
-  border-radius: var(--radius-card);
   box-shadow: var(--card-shadow);
   overflow: hidden;
-  transition: var(--card-transition);
-  margin-bottom: 24px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  margin-bottom: 28px;
 }
 
 .post-card:hover {
   box-shadow: var(--card-hover-shadow);
+  transform: translate(-2px, -2px);
 }
 
 .post-card.reverse {
   flex-direction: row-reverse;
 }
 
+.post-card-link {
+  display: flex;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-card.reverse .post-card-link {
+  flex-direction: row-reverse;
+}
+
 .post-cover {
   width: 44%;
   flex-shrink: 0;
+  border-right: 3px solid var(--shadow-color);
+}
+
+.post-card.reverse .post-cover {
+  border-right: none;
+  border-left: 3px solid var(--shadow-color);
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .cover-placeholder {
@@ -125,10 +221,16 @@ const posts = [
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--accent-bg), rgba(73, 177, 245, 0.2));
-  color: var(--accent);
-  font-size: 1.2em;
-  font-weight: 600;
+  background: var(--accent-yellow);
+  color: #1a1a1a;
+  font-family: var(--font-heading);
+  font-size: 3em;
+  font-weight: 700;
+}
+
+[data-theme='dark'] .cover-placeholder {
+  background: var(--accent-bg);
+  color: var(--accent-yellow);
 }
 
 .post-content {
@@ -140,11 +242,14 @@ const posts = [
 }
 
 .post-title {
+  font-family: var(--font-heading);
   font-size: 1.5em;
   font-weight: 700;
   color: var(--text-strong);
   margin: 0 0 10px;
-  line-height: 1.4;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .post-meta {
@@ -175,32 +280,104 @@ const posts = [
 .post-tag {
   padding: 3px 10px;
   font-size: 0.78em;
-  color: var(--text-main);
-  background: var(--accent-bg);
-  border-radius: var(--radius-sm);
-  transition: var(--card-transition);
+  font-weight: 600;
+  color: #1a1a1a;
+  background: var(--accent-yellow);
+  transition: background 0.1s ease;
   cursor: default;
 }
 
 .post-tag:hover {
-  color: #fff;
   background: var(--accent);
+  color: #fff;
+}
+
+/* Loading / Empty */
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  padding: 20px 0;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  border: 3px solid var(--shadow-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  font-family: var(--font-heading);
+  font-size: 0.9em;
+  font-weight: 600;
+  margin-left: -3px;
+}
+
+.pagination button:first-child {
+  margin-left: 0;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  z-index: 1;
+  position: relative;
+}
+
+.pagination button.active {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+  z-index: 1;
+  position: relative;
+}
+
+[data-theme='dark'] .pagination button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 @media (max-width: 900px) {
-  .hero-title {
-    font-size: 2.8em;
-  }
-
   .post-card,
   .post-card.reverse {
-    flex-direction: column;
     height: auto;
+    flex-direction: column;
+  }
+
+  .post-card-link,
+  .post-card.reverse .post-card-link {
+    flex-direction: column;
   }
 
   .post-cover {
     width: 100%;
     height: 180px;
+    border-right: none;
+    border-bottom: 3px solid var(--shadow-color);
+  }
+
+  .post-card.reverse .post-cover {
+    border-left: none;
+    border-bottom: 3px solid var(--shadow-color);
   }
 
   .post-content {
@@ -208,7 +385,12 @@ const posts = [
   }
 
   .post-title {
-    font-size: 1.25em;
+    font-size: 1.2em;
+  }
+
+  .pagination button {
+    padding: 6px 10px;
+    font-size: 0.82em;
   }
 }
 </style>

@@ -11,14 +11,14 @@ const blogRoutes: RouteRecordRaw[] = [
         component: () => import('@/pages/blog/HomePage.vue'),
       },
       {
-        path: 'posts',
-        name: '文章列表',
-        component: () => import('@/pages/blog/PostListPage.vue'),
-      },
-      {
         path: 'posts/:id',
         name: '文章详情',
         component: () => import('@/pages/blog/PostDetailPage.vue'),
+      },
+      {
+        path: 'guestbook',
+        name: '留言板',
+        component: () => import('@/pages/blog/GuestbookPage.vue'),
       },
     ],
   },

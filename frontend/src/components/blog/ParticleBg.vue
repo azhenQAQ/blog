@@ -4,12 +4,16 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 const canvasRef = ref<HTMLCanvasElement>()
 let animId = 0
 
-interface Point {
+interface Block {
   x: number
   y: number
   vx: number
   vy: number
   size: number
+  rotation: number
+  vr: number
+  type: 'square' | 'circle' | 'cross'
+  alpha: number
 }
 
 onMounted(() => {
@@ -26,50 +30,67 @@ onMounted(() => {
   window.addEventListener('resize', resize)
 
   const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light'
-  const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 20000))
+  const count = Math.min(30, Math.floor((canvas.width * canvas.height) / 30000))
 
-  const points: Point[] = Array.from({ length: count }, () => ({
+  const types: Block['type'][] = ['square', 'circle', 'cross']
+  const blocks: Block[] = Array.from({ length: count }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    vx: (Math.random() - 0.5) * 0.6,
-    vy: (Math.random() - 0.5) * 0.6,
-    size: Math.random() * 2 + 0.5,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    size: Math.random() * 16 + 6,
+    rotation: Math.random() * Math.PI * 2,
+    vr: (Math.random() - 0.5) * 0.002,
+    type: types[Math.floor(Math.random() * types.length)],
+    alpha: Math.random() * 0.06 + 0.03,
   }))
+
+  const drawCross = (x: number, y: number, s: number) => {
+    const t = s * 0.3
+    ctx.fillRect(x - s / 2, y - t / 2, s, t)
+    ctx.fillRect(x - t / 2, y - s / 2, t, s)
+  }
 
   const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     const dark = isDark()
-    const lineColor = dark ? 'rgba(73, 177, 245, 0.15)' : 'rgba(73, 177, 245, 0.12)'
-    const dotColor = dark ? 'rgba(73, 177, 245, 0.25)' : 'rgba(73, 177, 245, 0.2)'
 
-    for (const p of points) {
-      p.x += p.vx
-      p.y += p.vy
-      if (p.x < 0 || p.x > canvas.width) p.vx *= -1
-      if (p.y < 0 || p.y > canvas.height) p.vy *= -1
-    }
+    for (const b of blocks) {
+      b.x += b.vx
+      b.y += b.vy
+      b.rotation += b.vr
+      if (b.x < -20 || b.x > canvas.width + 20) b.vx *= -1
+      if (b.y < -20 || b.y > canvas.height + 20) b.vy *= -1
 
-    for (let i = 0; i < points.length; i++) {
-      for (let j = i + 1; j < points.length; j++) {
-        const dx = points[i].x - points[j].x
-        const dy = points[i].y - points[j].y
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 150) {
-          ctx.beginPath()
-          ctx.moveTo(points[i].x, points[i].y)
-          ctx.lineTo(points[j].x, points[j].y)
-          ctx.strokeStyle = lineColor
-          ctx.lineWidth = 0.6
-          ctx.stroke()
-        }
+      ctx.save()
+      ctx.translate(b.x, b.y)
+      ctx.rotate(b.rotation)
+      ctx.globalAlpha = b.alpha
+
+      if (dark) {
+        ctx.fillStyle = '#ffd600'
+        ctx.strokeStyle = '#ff5722'
+      } else {
+        ctx.fillStyle = '#1a1a1a'
+        ctx.strokeStyle = '#ff5722'
       }
-    }
+      ctx.lineWidth = 1.5
 
-    for (const p of points) {
-      ctx.beginPath()
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-      ctx.fillStyle = dotColor
-      ctx.fill()
+      switch (b.type) {
+        case 'square':
+          ctx.fillRect(-b.size / 2, -b.size / 2, b.size, b.size)
+          break
+        case 'circle':
+          ctx.beginPath()
+          ctx.arc(0, 0, b.size / 2, 0, Math.PI * 2)
+          ctx.fill()
+          break
+        case 'cross':
+          drawCross(0, 0, b.size)
+          break
+      }
+
+      ctx.restore()
     }
 
     animId = requestAnimationFrame(draw)

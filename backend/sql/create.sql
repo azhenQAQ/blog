@@ -7,10 +7,11 @@ USE `blog`;
 
 -- ============================================================
 -- 由于存在外键约束，删除表时必须先删子表，再删父表
--- DROP 顺序: article_tag → article → attachment → friend_link → tag → user
--- CREATE 顺序相反: user → tag → friend_link → attachment → article → article_tag
+-- DROP 顺序: comment → article_tag → article → attachment → friend_link → tag → user
+-- CREATE 顺序相反: user → tag → friend_link → attachment → article → article_tag → comment
 -- ============================================================
 
+DROP TABLE IF EXISTS `comment`;
 DROP TABLE IF EXISTS `article_tag`;
 DROP TABLE IF EXISTS `article`;
 DROP TABLE IF EXISTS `attachment`;
@@ -126,3 +127,26 @@ CREATE TABLE IF NOT EXISTS `article_tag` (
     UNIQUE KEY `uk_article_tag` (`article_id`, `tag_id`),
     KEY `idx_tag_id` (`tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章标签关联表';
+
+-- -----------------------------------------------------------
+-- 7. 评论/留言表 (comment)
+-- -----------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `comment` (
+    `id`            BIGINT       NOT NULL AUTO_INCREMENT  COMMENT '主键',
+    `type`          VARCHAR(20)  NOT NULL                  COMMENT '类型: comment=文章评论, guestbook=留言板',
+    `article_id`    BIGINT       DEFAULT NULL              COMMENT '关联文章ID（留言板时为NULL）',
+    `parent_id`     BIGINT       DEFAULT NULL              COMMENT '父评论ID（回复时使用）',
+    `reply_to_name` VARCHAR(50)  DEFAULT NULL              COMMENT '被回复者昵称',
+    `nickname`      VARCHAR(50)  NOT NULL                  COMMENT '访客昵称',
+    `email`         VARCHAR(100) NOT NULL                  COMMENT '访客邮箱',
+    `content`       VARCHAR(500) NOT NULL                  COMMENT '评论内容',
+    `ip_address`    VARCHAR(45)  DEFAULT NULL              COMMENT '访客IP',
+    `created_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at`    DATETIME     DEFAULT NULL              COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_type` (`type`),
+    KEY `idx_article_id` (`article_id`),
+    KEY `idx_parent_id` (`parent_id`),
+    KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评论/留言表';

@@ -108,7 +108,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   z-index: 200;
 }
 
@@ -116,24 +116,21 @@ onUnmounted(() => {
 .trigger-btn {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
   background: var(--card-bg);
-  border: var(--card-border);
-  box-shadow: var(--card-shadow);
+  border: 3px solid var(--shadow-color);
+  box-shadow: 4px 4px 0 var(--shadow-color);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s ease;
+  transition: all 0.1s ease;
   padding: 0;
   overflow: hidden;
 }
 
 .trigger-btn:hover {
-  transform: scale(1.1);
-  box-shadow: var(--card-hover-shadow);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--shadow-color);
 }
 
 .trigger-btn img {
@@ -148,13 +145,13 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   opacity: 0;
   transform: translateY(8px);
   pointer-events: none;
   transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
+    opacity 0.15s ease,
+    transform 0.15s ease;
 }
 
 .expanded .toolbar-buttons {
@@ -167,20 +164,18 @@ onUnmounted(() => {
 .tool-btn {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   background: var(--card-bg);
-  border: var(--card-border);
-  box-shadow: var(--card-shadow);
+  border: 3px solid var(--shadow-color);
+  box-shadow: 3px 3px 0 var(--shadow-color);
   color: var(--text-main);
+  font-family: var(--font-heading);
   font-size: 1.1em;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: all 0.1s ease;
 }
 
 .tool-btn img {
@@ -191,8 +186,14 @@ onUnmounted(() => {
 }
 
 .tool-btn:hover {
-  background: var(--accent-bg);
-  box-shadow: var(--card-hover-shadow);
+  background: var(--accent-yellow);
+  box-shadow: 5px 5px 0 var(--shadow-color);
+  transform: translate(-2px, -2px);
+}
+
+[data-theme='dark'] .tool-btn:hover {
+  background: var(--accent);
+  color: #fff;
 }
 
 /* 移动端 ≤900px */
@@ -200,12 +201,13 @@ onUnmounted(() => {
   .floating-toolbar {
     bottom: 20px;
     right: 6px;
-    gap: 6px;
+    gap: 8px;
   }
 
   .trigger-btn {
     width: 38px;
     height: 38px;
+    box-shadow: 3px 3px 0 var(--shadow-color);
   }
 
   .trigger-btn img {
@@ -216,6 +218,7 @@ onUnmounted(() => {
   .tool-btn {
     width: 34px;
     height: 34px;
+    box-shadow: 2px 2px 0 var(--shadow-color);
   }
 
   .tool-btn img {
@@ -224,7 +227,7 @@ onUnmounted(() => {
   }
 
   .toolbar-buttons {
-    gap: 6px;
+    gap: 8px;
   }
 }
 </style>

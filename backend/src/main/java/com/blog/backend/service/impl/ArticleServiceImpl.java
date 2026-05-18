@@ -2,6 +2,7 @@ package com.blog.backend.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,7 +27,9 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -305,5 +308,67 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             return plainText;
         }
         return plainText.substring(0, 200);
+    }
+
+    @Override
+    public Page<ArticleVO> listPublicByPage(long current, long size) {
+        QueryWrapper<Article> wrapper = new QueryWrapper<>();
+        wrapper.eq("status", ArticleStatusEnum.PUBLISHED.getValue())
+                .eq("is_top", 0)
+                .orderByDesc("created_at");
+        Page<Article> page = this.page(new Page<>(current, size), wrapper);
+        Page<ArticleVO> voPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        voPage.setRecords(getArticleVOList(page.getRecords()));
+        return voPage;
+    }
+
+    @Override
+    public List<ArticleVO> listTopArticles() {
+        QueryWrapper<Article> wrapper = new QueryWrapper<>();
+        wrapper.eq("status", ArticleStatusEnum.PUBLISHED.getValue())
+                .eq("is_top", 1)
+                .orderByDesc("created_at");
+        List<Article> articles = this.list(wrapper);
+        return getArticleVOList(articles);
+    }
+
+    @Override
+    public ArticleDetailVO getPublicArticleDetail(Long id) {
+        if (id == null || id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "文章ID无效");
+        }
+        Article article = this.getById(id);
+        if (article == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "文章不存在");
+        }
+        if (!ArticleStatusEnum.PUBLISHED.getValue().equals(article.getStatus())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "文章未发布");
+        }
+        // 递增浏览量
+        articleMapper.incrementViewCount(id);
+        article.setViewCount(article.getViewCount() + 1);
+
+        ArticleDetailVO vo = new ArticleDetailVO();
+        BeanUtil.copyProperties(article, vo);
+        fillAuthorAndTags(vo, article);
+        return vo;
+    }
+
+    @Override
+    public Map<String, ArticleVO> getAdjacentArticles(Long id) {
+        if (id == null || id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "文章ID无效");
+        }
+        Article article = this.getById(id);
+        if (article == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "文章不存在");
+        }
+        var createdAt = DateUtil.toLocalDateTime(article.getCreatedAt());
+        Article prev = articleMapper.selectPreviousPublished(createdAt);
+        Article next = articleMapper.selectNextPublished(createdAt);
+        Map<String, ArticleVO> result = new HashMap<>();
+        result.put("prev", prev != null ? getArticleVO(prev) : null);
+        result.put("next", next != null ? getArticleVO(next) : null);
+        return result;
     }
 }

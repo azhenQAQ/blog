@@ -59,6 +59,12 @@ export interface ArticleAddRequest {
   tagIds?: number[]
 }
 
+/** 相邻文章 */
+export interface AdjacentResult {
+  prev: ArticleVO | null
+  next: ArticleVO | null
+}
+
 /** 编辑文章请求 */
 export interface ArticleEditRequest {
   id: number

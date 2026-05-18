@@ -11,6 +11,8 @@ import {
 import { ARTICLE_STATUS, articleStatusLabel } from '@/types/article'
 import type { ArticleVO, ArticleQueryRequest } from '@/types/article'
 
+defineOptions({ name: 'PostManagePage' })
+
 const router = useRouter()
 
 const loading = ref(false)

@@ -14,7 +14,9 @@ import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
         <router-view />
       </main>
       <aside class="sidebar-area">
-        <SideBar />
+        <div class="sidebar-sticky-wrap">
+          <SideBar />
+        </div>
       </aside>
     </div>
     <FloatingToolbar />
@@ -40,6 +42,7 @@ import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
   gap: 24px;
   position: relative;
   z-index: 1;
+  min-height: 100vh;
 }
 
 .content-area {
@@ -52,9 +55,11 @@ import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
   min-width: var(--sidebar-min-width);
   max-width: var(--sidebar-max-width);
   flex-shrink: 0;
+}
+
+.sidebar-sticky-wrap {
   position: sticky;
   top: var(--nav-height);
-  align-self: flex-start;
   max-height: calc(100vh - var(--nav-height));
   overflow-y: auto;
 }
@@ -69,6 +74,9 @@ import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
     width: 100%;
     min-width: unset;
     max-width: unset;
+  }
+
+  .sidebar-sticky-wrap {
     position: static;
     max-height: none;
     overflow-y: visible;

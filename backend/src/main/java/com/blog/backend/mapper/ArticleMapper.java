@@ -34,4 +34,22 @@ public interface ArticleMapper extends BaseMapper<Article> {
      */
     @Update("DELETE FROM article WHERE id = #{id}")
     int deletePermanently(@Param("id") Long id);
+
+    /**
+     * 递增浏览量
+     */
+    @Update("UPDATE article SET view_count = view_count + 1 WHERE id = #{id}")
+    int incrementViewCount(@Param("id") Long id);
+
+    /**
+     * 查询上一篇已发布文章（created_at 小于当前文章，非置顶，已发布）
+     */
+    @Select("SELECT * FROM article WHERE status = 1 AND is_top = 0 AND created_at < #{createdAt} ORDER BY created_at DESC LIMIT 1")
+    Article selectPreviousPublished(@Param("createdAt") java.time.LocalDateTime createdAt);
+
+    /**
+     * 查询下一篇已发布文章（created_at 大于当前文章，非置顶，已发布）
+     */
+    @Select("SELECT * FROM article WHERE status = 1 AND is_top = 0 AND created_at > #{createdAt} ORDER BY created_at ASC LIMIT 1")
+    Article selectNextPublished(@Param("createdAt") java.time.LocalDateTime createdAt);
 }

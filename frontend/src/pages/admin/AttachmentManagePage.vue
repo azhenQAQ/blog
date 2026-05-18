@@ -10,6 +10,8 @@ import {
 import type { AttachmentVO, AttachmentQueryRequest } from '@/types/attachment'
 import ImageLightbox from '@/components/admin/ImageLightbox.vue'
 
+defineOptions({ name: 'AttachmentManagePage' })
+
 const loading = ref(false)
 const uploading = ref(false)
 const attachmentList = ref<AttachmentVO[]>([])
@@ -86,6 +88,27 @@ async function handleUpload(file: UploadFile) {
     ElMessage.error(msg)
   } finally {
     uploading.value = false
+  }
+}
+
+async function handleCopyLink(item: AttachmentVO) {
+  try {
+    await navigator.clipboard.writeText(globalThis.location.origin + item.url)
+    ElMessage.success('链接已复制到剪贴板')
+  } catch {
+    ElMessage.error('复制失败，请手动复制')
+  }
+}
+
+async function handleCopyMarkdown(item: AttachmentVO) {
+  const name = item.originalName
+  const url = item.url
+  const md = isImage(item) ? `![${name}](${url})` : `[${name}](${url})`
+  try {
+    await navigator.clipboard.writeText(md)
+    ElMessage.success('Markdown 格式已复制')
+  } catch {
+    ElMessage.error('复制失败，请手动复制')
   }
 }
 
@@ -291,6 +314,26 @@ onMounted(() => {
                         查看
                       </el-button>
                     </el-tooltip>
+                    <el-dropdown @command="(cmd: string) => cmd === 'link' ? handleCopyLink(item) : handleCopyMarkdown(item)">
+                      <el-button type="info" size="small" plain>
+                        复制
+                        <el-icon style="margin-left: 4px">
+                          <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none">
+                            <polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </el-icon>
+                      </el-button>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item command="link">
+                            复制链接
+                          </el-dropdown-item>
+                          <el-dropdown-item command="markdown">
+                            复制为 Markdown 格式
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
                     <el-button
                       type="danger"
                       size="small"

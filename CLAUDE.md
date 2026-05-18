@@ -6,66 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 个人博客全栈项目，前后端分离部署。
 
-| 层 | 技术栈 | 入口/配置 | 专属指南 |
-|---|---|---|---|
-| **backend** | Spring Boot 3.5 + Java 21 + Maven + MySQL + MyBatis-Plus + Sa-Token | `backend/src/main/java/com/blog/backend/AppApplication.java` | `backend/CLAUDE.md` |
-| **frontend** | Vue 3 (Composition API) + TypeScript 6 + Vite 8 + Pinia 3 + Vue Router 5 | `frontend/src/main.ts`、`frontend/vite.config.ts` | `frontend/CLAUDE.md` |
+| 层           | 技术栈                                                                   | 入口/配置                                                    | 专属指南             |
+| ------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------ | -------------------- |
+| **backend**  | Spring Boot 3.5 + Java 21 + Maven + MySQL + MyBatis-Plus + Sa-Token      | `backend/src/main/java/com/blog/backend/AppApplication.java` | `backend/CLAUDE.md`  |
+| **frontend** | Vue 3 (Composition API) + TypeScript 6 + Vite 8 + Pinia 3 + Vue Router 5 | `frontend/src/main.ts`、`frontend/vite.config.ts`            | `frontend/CLAUDE.md` |
 
-## 系统架构
-
-```
-前端 (Vite dev server :5173)
-  ├── 博客端 (/)              → BlogLayout（导航栏 + 侧边栏 + 粒子背景）
-  │   ├── /                   → 主页 (HomePage)
-  │   ├── /user/login         → 登录
-  │   ├── /user/register      → 注册
-  │   ├── /posts              → 文章列表
-  │   └── /posts/:id          → 文章详情
-  ├── 管理端 (/admin/*)       → 独立页面，无公共布局
-  │   ├── /admin/dashboard    → 控制台
-  │   ├── /admin/userManage   → 用户管理
-  │   ├── /admin/posts        → 文章管理
-  │   └── /admin/comments     → 评论管理
-  │
-  └── API 请求 ─────────────────→ 后端 (Spring Boot :8123/api)
-                                    ├── Controller → Service(interface) → ServiceImpl → Mapper → DB
-                                    ├── 认证：Sa-Token（StpUtil）
-                                    ├── 权限：@AuthCheck 注解 + AuthInterceptor AOP 切面
-                                    └── 响应：BaseResponse<T>（code=0 成功，其他见 ErrorCode）
-```
-
-## 数据库
-
-MySQL 数据库名 `blog`，建表脚本 `backend/sql/create.sql`，共 5 张表：
-
-| 表 | 说明 | 关键字段 |
-|---|---|---|
-| `user` | 用户表 | id, username, password, nickname, role(admin/user), deleted_at |
-| `article` | 文章表 | id, title, content(Markdown), status(1发布/0草稿), user_id(FK→user) |
-| `tag` | 标签表 | id, name, color, deleted_at |
-| `article_tag` | 文章标签多对多关联 | article_id, tag_id (联合唯一) |
-| `friend_link` | 友链表 | id, name, url, logo, sort_order, status |
-
-所有表使用 MyBatis-Plus 逻辑删除（`deleted_at`），配置了驼峰命名自动映射。
-
-## 运行命令
-
-以下为手动命令，仅用户明确要求时执行：
-
-**后端：**
-```sh
-cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local  # 启动（本地开发）
-./mvnw clean compile    # 编译
-./mvnw clean package -DskipTests  # 打包
-```
-
-**前端：**
-```sh
-cd frontend
-npm run dev      # 启动开发服务器
-npm run build    # 生产构建（含类型检查）
-npm run lint     # oxlint + ESLint 双检查
 ```
 
 ## 配置文件一览
@@ -95,6 +40,17 @@ npm run lint     # oxlint + ESLint 双检查
 - **禁止**主动新增、修改、执行测试用例
 - 以上操作仅在用户明确要求时方可执行
 
+## Agent Teams 协作
+
+当任务同时跨越前后端或涉及多个独立子步骤时，优先使用 Agent Teams 并行分工，减少串行等待：
+
+- `TeamCreate` 创建团队 → `Agent` 工具 spawn 子代理（如前后端各分派一个，或搜索/实现分离）
+- `TaskCreate` / `TaskUpdate` 分配并追踪子任务进度
+- 完工后 `TeamDelete` 清理团队资源
+
+适用场景：前后端并行开发、跨模块重构、多文件批量修改、独立子任务可并行执行等。
+
 ## 其他
 
 - 临时文件存放于各子项目的 `tmp` 目录
+```

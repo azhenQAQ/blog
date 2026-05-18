@@ -15,6 +15,9 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/oswald": "^5.2.8",
     "@kangc/v-md-editor": "^2.3.18",
     "axios": "^1.16.0",
     "element-plus": "^2.14.0",

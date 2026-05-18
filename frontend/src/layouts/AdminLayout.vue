@@ -2,25 +2,67 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useAdminTabsStore, resolveTabPath, getMenuRoutes } from '@/stores/adminTabs'
 import { updatePassword } from '@/api/modules/user'
 import { ElMessage } from 'element-plus'
+import {
+  Grid,
+  User,
+  Document,
+  PriceTag,
+  ChatDotSquare,
+  Folder,
+} from '@element-plus/icons-vue'
+import TabBar from '@/components/admin/TabBar.vue'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const tabStore = useAdminTabsStore()
 
 const isCollapse = ref(false)
 
 const activeMenu = ref(route.path)
 
+const iconMap: Record<string, unknown> = {
+  Grid,
+  User,
+  Document,
+  PriceTag,
+  ChatDotSquare,
+  Folder,
+}
+
+const menuRoutes = computed(() => getMenuRoutes())
+
+const cachedComponentNames = computed(() => {
+  const names: string[] = []
+  for (const r of getMenuRoutes()) {
+    if (r.meta?.keepAlive !== true) continue
+    const fullPath = '/admin/' + r.path
+    if (tabStore.tabs.some((t) => t.path === fullPath)) {
+      const name = r.meta?.componentName as string | undefined
+      if (name) names.push(name)
+    }
+  }
+  return names
+})
+
 watch(
   () => route.path,
   (path) => {
     activeMenu.value = path
+    const tabPath = resolveTabPath(path)
+    if (tabPath) {
+      tabStore.openTab(tabPath)
+      tabStore.setActiveTab(tabPath)
+    }
   },
+  { immediate: true },
 )
 
 function navigateTo(path: string) {
+  tabStore.openTab(path)
   router.push(path)
 }
 
@@ -31,6 +73,7 @@ function onAvatarError(e: Event) {
 }
 
 function handleLogout() {
+  tabStore.reset()
   userStore.logout()
   router.push('/login')
 }
@@ -68,6 +111,7 @@ async function handleUpdatePassword() {
     })
     ElMessage.success('密码修改成功，请重新登录')
     passwordVisible.value = false
+    tabStore.reset()
     userStore.logout()
     router.push('/login')
   } catch (e: unknown) {
@@ -97,89 +141,15 @@ async function handleUpdatePassword() {
           class="admin-menu"
           @select="navigateTo"
         >
-          <el-menu-item index="/admin/dashboard">
-            <el-icon
-              ><svg viewBox="0 0 24 24" width="1em" height="1em">
-                <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" />
-                <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" />
-                <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" />
-                <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor" /></svg
-            ></el-icon>
-            <template #title>控制台</template>
-          </el-menu-item>
-
-          <el-menu-item index="/admin/userManage">
-            <el-icon
-              ><svg viewBox="0 0 24 24" width="1em" height="1em">
-                <circle cx="12" cy="8" r="4" fill="currentColor" />
-                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="currentColor" /></svg
-            ></el-icon>
-            <template #title>用户管理</template>
-          </el-menu-item>
-
-          <el-menu-item index="/admin/posts">
-            <el-icon
-              ><svg viewBox="0 0 24 24" width="1em" height="1em">
-                <rect
-                  x="3"
-                  y="3"
-                  width="18"
-                  height="18"
-                  rx="2"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                />
-                <path d="M3 9h18" stroke="currentColor" stroke-width="2" />
-                <path d="M9 3v18" stroke="currentColor" stroke-width="2" /></svg
-            ></el-icon>
-            <template #title>文章管理</template>
-          </el-menu-item>
-
-          <el-menu-item index="/admin/tags">
-            <el-icon
-              ><svg viewBox="0 0 24 24" width="1em" height="1em">
-                <path
-                  d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                />
-                <line x1="7" y1="7" x2="7.01" y2="7" stroke="currentColor" stroke-width="2" /></svg
-            ></el-icon>
-            <template #title>标签管理</template>
-          </el-menu-item>
-
-          <el-menu-item index="/admin/comments">
-            <el-icon
-              ><svg viewBox="0 0 24 24" width="1em" height="1em">
-                <path
-                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                  fill="currentColor"
-                /></svg
-            ></el-icon>
-            <template #title>评论管理</template>
-          </el-menu-item>
-
-          <el-menu-item index="/admin/attachments">
-            <el-icon
-              ><svg viewBox="0 0 24 24" width="1em" height="1em">
-                <path
-                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                />
-                <polyline
-                  points="14 2 14 8 20 8"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                />
-                <line x1="12" y1="18" x2="12" y2="12" stroke="currentColor" stroke-width="2" />
-                <line x1="9" y1="15" x2="15" y2="15" stroke="currentColor" stroke-width="2" /></svg
-            ></el-icon>
-            <template #title>附件库</template>
+          <el-menu-item
+            v-for="item in menuRoutes"
+            :key="item.path"
+            :index="'/admin/' + item.path"
+          >
+            <el-icon v-if="item.meta?.icon">
+              <component :is="iconMap[(item.meta.icon as string)]" />
+            </el-icon>
+            <template #title>{{ item.meta?.menuTitle || item.name }}</template>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -206,8 +176,14 @@ async function handleUpdatePassword() {
           </div>
         </el-header>
 
+        <TabBar />
+
         <el-main class="admin-main">
-          <router-view />
+          <router-view v-slot="{ Component }">
+            <keep-alive :include="cachedComponentNames">
+              <component :is="Component" />
+            </keep-alive>
+          </router-view>
         </el-main>
 
         <!-- 修改密码弹窗 -->
