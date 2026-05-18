@@ -9,6 +9,7 @@ import {
 } from '@/api/modules/attachment'
 import type { AttachmentVO, AttachmentQueryRequest } from '@/types/attachment'
 import ImageLightbox from '@/components/admin/ImageLightbox.vue'
+import { copyText } from '@/utils/clipboard'
 
 defineOptions({ name: 'AttachmentManagePage' })
 
@@ -93,7 +94,7 @@ async function handleUpload(file: UploadFile) {
 
 async function handleCopyLink(item: AttachmentVO) {
   try {
-    await navigator.clipboard.writeText(globalThis.location.origin + item.url)
+    await copyText(globalThis.location.origin + item.url)
     ElMessage.success('链接已复制到剪贴板')
   } catch {
     ElMessage.error('复制失败，请手动复制')
@@ -105,7 +106,7 @@ async function handleCopyMarkdown(item: AttachmentVO) {
   const url = item.url
   const md = isImage(item) ? `![${name}](${url})` : `[${name}](${url})`
   try {
-    await navigator.clipboard.writeText(md)
+    await copyText(md)
     ElMessage.success('Markdown 格式已复制')
   } catch {
     ElMessage.error('复制失败，请手动复制')
