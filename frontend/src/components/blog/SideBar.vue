@@ -1,13 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { listPublicArticleByPage } from '@/api/modules/article'
 import { listPublicTags } from '@/api/modules/tag'
+import { listGuestbook } from '@/api/modules/comment'
 import type { TagVO } from '@/types/tag'
+
+const SITE_START = new Date('2026-05-16')
 
 const author = {
   name: '阿臻',
   avatar: '/images/author-avatar.jpg',
-  stats: { 文章: 42, 标签: 18, 留言: 128 },
 }
+
+const articleCount = ref(0)
+const guestbookCount = ref(0)
+
+const authorStats = computed(() => ({
+  文章: articleCount.value,
+  标签: tags.value.length,
+  留言: guestbookCount.value,
+}))
 
 const bio = ref('正在加载中。。。')
 
@@ -25,6 +37,16 @@ async function fetchBio() {
 
 const tags = ref<TagVO[]>([])
 
+function calcRunningDays(): number {
+  const diff = Date.now() - SITE_START.getTime()
+  return Math.max(1, Math.floor(diff / (1000 * 60 * 60 * 24)))
+}
+
+const info = computed(() => ({
+  运行天数: calcRunningDays(),
+  访问量: '12.3k',
+}))
+
 onMounted(() => {
   fetchBio()
   listPublicTags()
@@ -32,12 +54,17 @@ onMounted(() => {
       tags.value = data
     })
     .catch(() => {})
+  listPublicArticleByPage(1, 1)
+    .then((page) => {
+      articleCount.value = page.total
+    })
+    .catch(() => {})
+  listGuestbook()
+    .then((list) => {
+      guestbookCount.value = list.length
+    })
+    .catch(() => {})
 })
-
-const info = {
-  运行天数: 365,
-  访问量: '12.3k',
-}
 
 const activeTab = ref<'tags' | 'info'>('tags')
 </script>
@@ -54,7 +81,7 @@ const activeTab = ref<'tags' | 'info'>('tags')
         <h3 class="author-name">{{ author.name }}</h3>
         <p class="author-bio">{{ bio }}</p>
         <div class="author-stats">
-          <div v-for="(val, key) in author.stats" :key="key" class="stat">
+          <div v-for="(val, key) in authorStats" :key="key" class="stat">
             <span class="stat-val">{{ val }}</span>
             <span class="stat-label">{{ key }}</span>
           </div>
