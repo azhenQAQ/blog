@@ -3,62 +3,46 @@ spring:
     active: local
   application:
     name: blog
-    # mysql
-    datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/blog
-      username: root
-      password: 123456
-    # session 配置
-    session:
-      store-type: redis
-      # session 30 天过期
-      timeout: 2592000
-    # redis
-    data:
-      redis:
-        host: localhost
-        port: 6379
-        password:
-        ttl: 3600
-    # 文件上传配置
-    servlet:
-      multipart:
-        enabled: true
-        max-file-size: 10MB
-        max-request-size: 10MB
+  # mysql
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/blog
+    username: root
+    password: 123456
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
-  server:
-    port: 8123
-    servlet:
-      context-path: /api
-      # cookie 30 天过期
-      session:
-        cookie:
-          max-age: 2592000
-  springdoc:
-    group-configs:
-      - group: "default"
-        paths-to-match: "/**"
-        packages-to-scan: com.blog.backend.controller
-  knife4j:
-    enable: true
-    setting:
-      language: zh_cn
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+springdoc:
+  group-configs:
+    - group: "default"
+      paths-to-match: "/**"
+      packages-to-scan: com.blog.backend.controller
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
 
 mybatis-plus:
   configuration:
-    map-underscore-to-camel-case: true # 开启驼峰命名映射: A_COLUMN → aColumn
+    map-underscore-to-camel-case: true
   global-config:
     db-config:
-      logic-delete-field: deletedAt # 全局逻辑删除字段名(实体类属性名称)
-      logic-delete-value: now() # 逻辑已删除值：使用 MySQL now() 函数获取当前时间
-      logic-not-delete-value: 'null' # 逻辑未删除值：null 字符串，对应数据库 DATETIME 的 NULL
+      logic-delete-field: deletedAt
+      logic-delete-value: now()
+      logic-not-delete-value: 'null'
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:
   # token 名称（同时也是 cookie 名称）
-  token-name: satoken
+  token-name: '看你心情'
   # token 有效期（单位：秒） 默认30天，-1 代表永久有效
   timeout: 2592000
   # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
