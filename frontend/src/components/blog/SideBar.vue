@@ -4,8 +4,12 @@ import { listPublicArticleByPage } from '@/api/modules/article'
 import { listPublicTags } from '@/api/modules/tag'
 import { listGuestbook } from '@/api/modules/comment'
 import type { TagVO } from '@/types/tag'
+import TableOfContents from '@/components/blog/TableOfContents.vue'
+import { useTocStore } from '@/stores/toc'
 
 const SITE_START = new Date('2026-05-16')
+
+const tocStore = useTocStore()
 
 const author = {
   name: '阿臻',
@@ -88,6 +92,9 @@ const activeTab = ref<'tags' | 'info'>('tags')
         </div>
       </div>
     </div>
+
+    <!-- 目录 -->
+    <TableOfContents v-if="tocStore.headings.length > 0" />
 
     <!-- 公告 -->
     <div class="card announcement">

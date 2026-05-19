@@ -1,20 +1,26 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPublicArticle, getAdjacentArticles } from '@/api/modules/article'
 import type { ArticleDetailVO, ArticleVO } from '@/types/article'
 import MarkdownIt from 'markdown-it'
+import markdownItAnchor from 'markdown-it-anchor'
 import hljs from 'highlight.js'
 import CommentSection from '@/components/blog/CommentSection.vue'
+import { useTocStore } from '@/stores/toc'
+import { parseHeadings, slugify } from '@/utils/toc'
 
 const route = useRoute()
 const router = useRouter()
+const tocStore = useTocStore()
 
 const article = ref<ArticleDetailVO | null>(null)
 const prevArticle = ref<ArticleVO | null>(null)
 const nextArticle = ref<ArticleVO | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+
+let observer: IntersectionObserver | null = null
 
 const md = new MarkdownIt({
   html: true,
@@ -37,6 +43,8 @@ const md = new MarkdownIt({
     return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`
   },
 })
+
+md.use(markdownItAnchor, { level: [2, 3], slugify })
 
 const renderedContent = computed(() => {
   if (!article.value?.content) return ''
@@ -70,10 +78,43 @@ async function fetchArticle(id: number) {
     prevArticle.value = adjacentData.prev
     nextArticle.value = adjacentData.next
     document.title = articleData.title + ' - 废话回收站'
+    tocStore.setHeadings(parseHeadings(articleData.content))
+    await nextTick()
+    setupScrollSpy()
   } catch (e: any) {
     error.value = e.message || '文章加载失败'
   } finally {
     loading.value = false
+  }
+}
+
+function setupScrollSpy() {
+  destroyScrollSpy()
+  const headings = document.querySelectorAll('.article-content h2[id], .article-content h3[id]')
+  if (headings.length === 0) return
+
+  observer = new IntersectionObserver(
+    () => {
+      let best: Element | null = null
+      for (const el of headings) {
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= 150) {
+          best = el
+        }
+      }
+      if (best) {
+        tocStore.setActiveId(best.id)
+      }
+    },
+    { rootMargin: '-80px 0px -70% 0px' },
+  )
+  headings.forEach((el) => observer!.observe(el))
+}
+
+function destroyScrollSpy() {
+  if (observer) {
+    observer.disconnect()
+    observer = null
   }
 }
 
@@ -87,11 +128,17 @@ onMounted(() => {
   fetchArticle(id)
 })
 
+onUnmounted(() => {
+  destroyScrollSpy()
+  tocStore.clear()
+})
+
 watch(
   () => route.params.id,
   (newId) => {
     const id = Number(newId)
     if (!Number.isNaN(id) && id > 0) {
+      destroyScrollSpy()
       fetchArticle(id)
       window.scrollTo({ top: 0 })
     }
