@@ -1,1 +1,0 @@
-import{A as e,T as t,q as n}from"./vue.runtime.esm-bundler--oTawntF.js";var r=e({name:`DashboardPage`,__name:`DashboardPage`,setup(e){return(e,r)=>(n(),t(`h1`,null,`后台控制台`))}});export{r as default};
