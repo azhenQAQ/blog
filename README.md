@@ -1,7 +1,7 @@
 # 个人博客（http://blog.azhenna.top）
 
 `本仓库99%的内容都是由AI生成，主要用于练习、提升自己的 vibe coding 能力`
-基于 **Spring Boot 3.5 + Vue 3 + MySQL** 的全栈个人博客系统，前后端分离部署。
+`基于 **Spring Boot 3.5 + Vue 3 + MySQL** 的全栈个人博客系统，前后端分离部署`。
 
 ## 技术栈
 
@@ -25,7 +25,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone <repo-url> blog
+git clone git@github.com:azhenQAQ/blog.git blog
 cd blog
 ```
 
@@ -33,7 +33,7 @@ cd blog
 
 登录 MySQL，创建数据库并执行建表脚本：
 
-`create.sql`，`seed-data.sql`
+`backend\sql\create.sql`，`backend\sql\seed-data.sql`
 
 > 脚本包含 7 张核心表（用户、文章、标签、评论等）和 20 条预置标签数据。
 
