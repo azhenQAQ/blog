@@ -1,1 +1,0 @@
-import{R as e,W as t,Z as n}from"./vendor-DZ8fr6vo.js";import{t as r}from"./CommentSection-QN6sK5jq.js";var i=t({__name:`GuestbookPage`,setup(t){return(t,i)=>(n(),e(r,{type:`guestbook`}))}});export{i as default};

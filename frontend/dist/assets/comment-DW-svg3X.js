@@ -1,1 +1,0 @@
-import{a as e}from"./index-BDsKWExz.js";function t(t){return e.post(`/comment/public/add`,t)}function n(t){return e.get(`/comment/public/article/${t}`)}function r(){return e.get(`/comment/public/guestbook`)}function i(t){return e.get(`/comment/list/page`,{params:t})}function a(t){return e.delete(`/comment/delete/${t}`)}export{r as a,i,a as n,n as r,t};
