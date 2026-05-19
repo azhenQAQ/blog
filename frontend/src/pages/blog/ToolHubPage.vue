@@ -1,11 +1,26 @@
 <script setup lang="ts">
-const tools = [
+interface Tool {
+  id: string
+  name: string
+  desc: string
+  path: string
+  external: boolean
+}
+
+const tools: Tool[] = [
   {
     id: 'image-process',
     name: '图片处理',
     desc: '支持图片压缩、裁剪与格式转换，纯本地处理，保护隐私安全',
-    icon: '🖼️',
     path: '/tools/image-process',
+    external: false,
+  },
+  {
+    id: 'ai-code',
+    name: 'AI零代码应用生成平台',
+    desc: '一句话，一键生成应用',
+    path: 'http://ai.azhenna.top',
+    external: true,
   },
 ]
 </script>
@@ -15,8 +30,26 @@ const tools = [
     <p class="page-subtitle">个人工具集，让日常开发中的小需求变得简单高效</p>
 
     <div class="tools-grid">
-      <a v-for="tool in tools" :key="tool.id" :href="tool.path" target="_blank" class="tool-card">
+      <router-link
+        v-for="tool in tools.filter((t) => !t.external)"
+        :key="tool.id"
+        :to="tool.path"
+        class="tool-card"
+      >
         <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.desc }}</p>
+        <span class="tool-arrow">→</span>
+      </router-link>
+
+      <a
+        v-for="tool in tools.filter((t) => t.external)"
+        :key="tool.id"
+        :href="tool.path"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="tool-card"
+      >
+        <h3 class="tool-name">{{ tool.name }} ↗</h3>
         <p class="tool-desc">{{ tool.desc }}</p>
         <span class="tool-arrow">→</span>
       </a>
