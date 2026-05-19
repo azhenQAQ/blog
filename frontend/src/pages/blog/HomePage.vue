@@ -202,6 +202,25 @@ onMounted(() => fetchData(1))
   width: 44%;
   flex-shrink: 0;
   border-right: 3px solid var(--shadow-color);
+  position: relative;
+}
+
+.post-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.15) 100%),
+    linear-gradient(to bottom, transparent 70%, var(--card-bg) 100%);
+}
+
+[data-theme='light'] .post-cover::after {
+  opacity: 0.25;
+}
+
+[data-theme='dark'] .post-cover::after {
+  opacity: 1;
 }
 
 .post-card.reverse .post-cover {

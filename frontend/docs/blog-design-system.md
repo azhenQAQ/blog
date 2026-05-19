@@ -1,24 +1,26 @@
 # 博客端设计系统
 
 > 风格方向：**新粗野主义印刷风 (Neo-Brutalist Print)**
-> 版本：v1，最后更新：2026-05-18
+> 版本：v1.1，最后更新：2026-05-19
 
 ## 布局架构
 
 ```
 BlogLayout
-├── ParticleBg          # 固定 Canvas 背景（几何印刷块漂浮）
-├── NavBar              # 固定顶部导航（60px 高）
-├── .main-container     # flex 容器（max-width: 1350px）
-│   ├── .content-area   # 左侧内容区（flex: 1）
+├── ParticleBg              # 固定 Canvas 背景（几何印刷块漂浮）
+├── NavBar                  # 固定顶部导航（60px 高）
+├── .main-container         # flex 容器（max-width: 1350px）
+│   ├── .content-area       # 左侧内容区（flex: 1）
 │   │   └── <router-view />
-│   └── .sidebar-area   # 右侧边栏（26%, 260px-290px）
+│   └── .sidebar-area       # 右侧边栏（26%, 260px-290px）
 │       └── SideBar
-└── FloatingToolbar     # 右下角浮动按钮组（主题切换 + 回到顶部）
+├── FloatingToolbar         # 右下角浮动按钮组（主题切换 + 回到顶部 + 退出登录）
+├── SnackbarContainer       # 消息通知队列（Teleport to body）
+└── ConfirmDialog           # 确认弹窗（Teleport to body）
 ```
 
 - 内容宽度由 BlogLayout 的 `.main-container` 统一控制，页面组件**禁止**自行设置 `max-width`
-- 移动端（≤900px）侧边栏置于内容下方 `position: static`
+- 移动端（≤900px）侧边栏变为 fixed 右侧抽屉，`transition: right 0.3s ease`，通过 ☰ 按钮 + 半透明 overlay 开关，路由切换时自动关闭
 - 侧边栏桌面端使用 `position: sticky; top: var(--nav-height)`
 
 ## 色彩系统
@@ -45,7 +47,7 @@ BlogLayout
 ### 硬阴影与边框
 
 ```
---radius-card: 0px           # 全直角，无圆角
+--radius-card: 0px           # 全直角，无圆角（overlay 浮层组件除外，见下方组件约定）
 --card-border: 3px solid #1a1a1a   # 粗边框
 --card-shadow: 6px 6px 0 #1a1a1a  # 硬阴影（无模糊）
 --card-hover-shadow: 8px 8px 0 #1a1a1a
@@ -93,6 +95,34 @@ BlogLayout
 
 - 3px 实线 `var(--shadow-color)`（替代原 1px 细线）
 
+### 封面图遮罩
+
+文章卡片封面图通过 `::after` 伪元素叠加双层渐变遮罩，柔化图片边缘并与卡片背景融合：
+
+- **vignette 暗角**：`radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.15) 100%)` — 中心清晰，边缘微暗
+- **底部融合**：`linear-gradient(to bottom, transparent 70%, var(--card-bg) 100%)` — 图片底部 30% 渐变为卡片背景色
+- 浅色模式 `opacity: 0.25`（极轻微），暗色模式 `opacity: 1`（完整效果）
+- `pointer-events: none` 不阻挡点击
+- 与 sidebar 作者卡片背景的渐变遮罩技法一致，视觉语言统一
+
+### 消息通知 Snackbar
+
+右上角消息通知队列（`position: fixed`，Teleport to body），通过 `TransitionGroup` 实现进出动画：
+
+- 四种类型：success（绿）、info（青）、warning（橙）、error（红），通过左侧 4px 彩色边框区分
+- 卡片 `border-radius: 10px`，暗色模式背景 `#2a2a2a`
+- 桌面端右侧滑入 `translateX(120%) → 0`，移动端顶部下滑 `translateY(-100%) → 0`
+- 自动消失，不移除指针事件
+
+### 确认弹窗 ConfirmDialog
+
+全局确认对话框（`position: fixed`，Teleport to body），通过 composable `useConfirm()` 调用：
+
+- 半透明黑色遮罩 `rgba(0,0,0,0.45)`，`z-index: 5000`
+- 卡片 `border-radius: 14px`（overlay 浮层例外，非 brutalist 直角规则适用范围）
+- 入场动画 `scale(0.95) → scale(1)` + opacity 淡入，`0.2s ease`
+- 移动端全宽自适应 `max-width: calc(100vw - 24px)`，按钮等宽撑满
+
 ## 动效规范
 
 - **transition**: `0.1s~0.15s ease`（快速、干脆）
@@ -112,7 +142,7 @@ BlogLayout
 
 - **唯一断点**: `@media (max-width: 900px)`
 - 导航栏变汉堡菜单
-- 内容/侧边栏变为纵向排列
+- 内容/侧边栏变为纵向排列，侧边栏以 fixed 抽屉形式从右侧滑入
 - 卡片封面图缩小、取消左右交替布局
 - 字号等比缩小
 
