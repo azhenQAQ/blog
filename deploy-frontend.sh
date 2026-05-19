@@ -12,6 +12,10 @@ echo "=========================================="
 # 1. 删除旧的 dist 目录
 if [ -d "$DIST_DIR" ]; then
     echo "正在删除旧的 dist 目录..."
+    # 解除 .user.ini 不可变属性（CloudLinux/CageFS 保护），否则 rm -rf 会失败
+    if [ -f "$DIST_DIR/.user.ini" ]; then
+        chattr -i "$DIST_DIR/.user.ini" 2>/dev/null || true
+    fi
     rm -rf "$DIST_DIR"
     echo "旧 dist 目录已删除"
 else
