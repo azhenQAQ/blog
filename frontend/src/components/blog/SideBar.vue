@@ -71,6 +71,27 @@ onMounted(() => {
 })
 
 const activeTab = ref<'tags' | 'info'>('tags')
+
+const socialLinks = [
+  {
+    name: 'GitHub',
+    url: 'https://github.com/azhenQAQ',
+    icon: '/images/github.png',
+    external: true,
+  },
+  {
+    name: 'Bilibili',
+    url: 'https://space.bilibili.com/383384313',
+    icon: '/images/bilibili.png',
+    external: true,
+  },
+  {
+    name: 'Email',
+    url: 'mailto:2319969434@qq.com',
+    icon: '/images/email.png',
+    external: false,
+  },
+]
 </script>
 
 <template>
@@ -89,6 +110,19 @@ const activeTab = ref<'tags' | 'info'>('tags')
             <span class="stat-val">{{ val }}</span>
             <span class="stat-label">{{ key }}</span>
           </div>
+        </div>
+        <div class="author-social">
+          <a
+            v-for="link in socialLinks"
+            :key="link.name"
+            :href="link.url"
+            :target="link.external ? '_blank' : undefined"
+            :rel="link.external ? 'noopener noreferrer' : undefined"
+            class="social-link"
+            :title="link.name"
+          >
+            <img :src="link.icon" :alt="link.name" class="social-icon" />
+          </a>
         </div>
       </div>
     </div>
@@ -235,6 +269,40 @@ const activeTab = ref<'tags' | 'info'>('tags')
   color: var(--text-main);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.author-social {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  border-top: 3px solid var(--shadow-color);
+  padding-top: 12px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.social-link:hover {
+  transform: translate(-1px, -1px);
+  opacity: 0.8;
+}
+
+.social-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+[data-theme='dark'] .social-link {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Announcement */

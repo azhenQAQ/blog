@@ -1,1 +1,0 @@
-import{a as e}from"./index-BGnVNnGH.js";function t(t){let n=new FormData;return n.append(`file`,t),e.post(`/attachment/upload`,n,{headers:{"Content-Type":`multipart/form-data`}})}function n(t){return e.get(`/attachment/list/page`,{params:t})}function r(t){return e.delete(`/attachment/delete/${t}`)}export{n,t as r,r as t};

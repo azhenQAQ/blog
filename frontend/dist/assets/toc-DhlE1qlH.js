@@ -1,1 +1,0 @@
-import{C as e,it as t}from"./vendor-BHb8wvAl.js";var n=e(`toc`,()=>{let e=t([]),n=t(``);function r(t){e.value=t,n.value=``}function i(e){n.value=e}function a(){e.value=[],n.value=``}return{headings:e,activeId:n,setHeadings:r,setActiveId:i,clear:a}});export{n as t};

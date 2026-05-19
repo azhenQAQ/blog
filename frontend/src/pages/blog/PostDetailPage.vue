@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, onDeactivated, onActivated, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPublicArticle, getAdjacentArticles } from '@/api/modules/article'
 import type { ArticleDetailVO, ArticleVO } from '@/types/article'
@@ -131,6 +131,20 @@ onMounted(() => {
 onUnmounted(() => {
   destroyScrollSpy()
   tocStore.clear()
+})
+
+onDeactivated(() => {
+  destroyScrollSpy()
+  tocStore.clear()
+})
+
+onActivated(() => {
+  if (article.value?.content) {
+    nextTick(() => {
+      tocStore.setHeadings(parseHeadings(article.value!.content))
+      setupScrollSpy()
+    })
+  }
 })
 
 watch(

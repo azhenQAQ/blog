@@ -1,1 +1,0 @@
-import{B as e,W as t,Y as n}from"./vendor-BHb8wvAl.js";var r=t({name:`DashboardPage`,__name:`DashboardPage`,setup(t){return(t,r)=>(n(),e(`h1`,null,`后台控制台`))}});export{r as default};
