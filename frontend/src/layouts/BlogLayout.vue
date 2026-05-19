@@ -31,7 +31,11 @@ watch(
     <div v-if="mobileSidebarOpen" class="sidebar-overlay" @click="mobileSidebarOpen = false" />
     <div class="main-container">
       <main class="content-area">
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </main>
       <aside class="sidebar-area" :class="{ open: mobileSidebarOpen }">
         <div class="sidebar-sticky-wrap">

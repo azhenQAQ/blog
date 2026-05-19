@@ -139,6 +139,7 @@ watch(
     const id = Number(newId)
     if (!Number.isNaN(id) && id > 0) {
       destroyScrollSpy()
+      tocStore.clear()
       fetchArticle(id)
       window.scrollTo({ top: 0 })
     }
