@@ -2,7 +2,7 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { useAdminTabsStore, resolveTabPath, getMenuRoutes } from '@/stores/adminTabs'
+import { useAdminTabsStore, resolveTabPath, resolveMenuPath, getMenuRoutes, findAdminRoute } from '@/stores/adminTabs'
 import { updatePassword } from '@/api/modules/user'
 import { ElMessage } from 'element-plus'
 import {
@@ -37,12 +37,11 @@ const menuRoutes = computed(() => getMenuRoutes())
 
 const cachedComponentNames = computed(() => {
   const names: string[] = []
-  for (const r of getMenuRoutes()) {
-    if (r.meta?.keepAlive !== true) continue
-    const fullPath = '/admin/' + r.path
-    if (tabStore.tabs.some((t) => t.path === fullPath)) {
-      const name = r.meta?.componentName as string | undefined
-      if (name) names.push(name)
+  for (const tab of tabStore.tabs) {
+    const route = findAdminRoute(tab.path)
+    if (route?.meta?.keepAlive === true) {
+      const name = route.meta?.componentName as string | undefined
+      if (name && !names.includes(name)) names.push(name)
     }
   }
   return names
@@ -51,12 +50,13 @@ const cachedComponentNames = computed(() => {
 watch(
   () => route.path,
   (path) => {
-    activeMenu.value = path
     const tabPath = resolveTabPath(path)
     if (tabPath) {
       tabStore.openTab(tabPath)
       tabStore.setActiveTab(tabPath)
     }
+    // 菜单高亮：解析到父级菜单路径
+    activeMenu.value = resolveMenuPath(path) || path
   },
   { immediate: true },
 )
@@ -181,7 +181,7 @@ async function handleUpdatePassword() {
         <el-main class="admin-main">
           <router-view v-slot="{ Component }">
             <keep-alive :include="cachedComponentNames">
-              <component :is="Component" />
+              <component :is="Component" :key="$route.fullPath" />
             </keep-alive>
           </router-view>
         </el-main>

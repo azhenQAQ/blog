@@ -6,10 +6,14 @@ import { addArticle, editArticle, getArticle } from '@/api/modules/article'
 import { listAllTags } from '@/api/modules/tag'
 import { uploadAttachment } from '@/api/modules/attachment'
 import { ARTICLE_STATUS } from '@/types/article'
+import { useAdminTabsStore } from '@/stores/adminTabs'
 import type { TagVO } from '@/types/tag'
+
+defineOptions({ name: 'PostEditPage' })
 
 const router = useRouter()
 const route = useRoute()
+const tabStore = useAdminTabsStore()
 
 const isEdit = computed(() => !!route.params.id)
 const pageTitle = computed(() => (isEdit.value ? '编辑文章' : '创建文章'))
@@ -50,6 +54,7 @@ onMounted(async () => {
       form.tagIds = article.tags?.map((t) => t.id) || []
     } catch {
       ElMessage.error('加载文章失败')
+      tabStore.closeTab(route.path)
       router.push('/admin/posts')
     } finally {
       loadingDetail.value = false
@@ -98,7 +103,7 @@ async function handleSaveAsDraft() {
         tagIds: form.tagIds,
       })
     } else {
-      await addArticle({
+      const newId = await addArticle({
         title: form.title,
         content: form.content,
         summary: form.summary,
@@ -107,9 +112,13 @@ async function handleSaveAsDraft() {
         isTop: form.isTop,
         tagIds: form.tagIds,
       })
+      form.id = newId
+      // 替换路由和 Tab 路径（/admin/posts/new → /admin/posts/:id/edit）
+      const editPath = `/admin/posts/${newId}/edit`
+      tabStore.closeTab(route.path)
+      router.replace(editPath)
     }
     ElMessage.success('已保存为草稿')
-    router.push('/admin/posts')
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : '保存失败'
     ElMessage.error(msg)
@@ -135,7 +144,7 @@ async function handlePublish() {
         tagIds: form.tagIds,
       })
     } else {
-      await addArticle({
+      const newId = await addArticle({
         title: form.title,
         content: form.content,
         summary: form.summary,
@@ -144,9 +153,13 @@ async function handlePublish() {
         isTop: form.isTop,
         tagIds: form.tagIds,
       })
+      form.id = newId
+      // 替换路由和 Tab 路径（/admin/posts/new → /admin/posts/:id/edit）
+      const editPath = `/admin/posts/${newId}/edit`
+      tabStore.closeTab(route.path)
+      router.replace(editPath)
     }
     ElMessage.success('文章已发布')
-    router.push('/admin/posts')
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : '发布失败'
     ElMessage.error(msg)
@@ -167,6 +180,7 @@ async function handleImageUpload(event: Event, insertImage: (url: string) => voi
 }
 
 function handleCancel() {
+  tabStore.closeTab(route.path)
   router.push('/admin/posts')
 }
 

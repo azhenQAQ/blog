@@ -9,11 +9,13 @@ import {
   permanentDeleteArticle,
 } from '@/api/modules/article'
 import { ARTICLE_STATUS, articleStatusLabel } from '@/types/article'
+import { useAdminTabsStore } from '@/stores/adminTabs'
 import type { ArticleVO, ArticleQueryRequest } from '@/types/article'
 
 defineOptions({ name: 'PostManagePage' })
 
 const router = useRouter()
+const tabStore = useAdminTabsStore()
 
 const loading = ref(false)
 const articleList = ref<ArticleVO[]>([])
@@ -90,11 +92,23 @@ function handleSizeChange(size: number) {
 }
 
 function handleCreate() {
-  router.push('/admin/posts/new')
+  const path = '/admin/posts/new'
+  if (tabStore.tabs.some((t) => t.path === path)) {
+    tabStore.setActiveTab(path)
+    router.push(path)
+    return
+  }
+  router.push(path)
 }
 
 function handleEdit(article: ArticleVO) {
-  router.push(`/admin/posts/${article.id}/edit`)
+  const path = `/admin/posts/${article.id}/edit`
+  if (tabStore.tabs.some((t) => t.path === path)) {
+    tabStore.setActiveTab(path)
+    router.push(path)
+    return
+  }
+  router.push(path)
 }
 
 function handleDelete(article: ArticleVO) {

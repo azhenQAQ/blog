@@ -20,11 +20,42 @@ function getMenuRoutes(): RouteRecordRaw[] {
   return getAdminChildren().filter((r) => r.meta?.menuVisible !== false)
 }
 
+/** 将路由 pattern（含 :param）转为正则匹配 */
+function matchRoutePattern(pattern: string, path: string): boolean {
+  const regexStr = pattern.replace(/:\w+/g, '[^/]+')
+  return new RegExp('^' + regexStr + '$').test(path)
+}
+
+/** 在所有 admin 子路由中查找匹配的路由记录 */
+function findAdminRoute(path: string): RouteRecordRaw | undefined {
+  return getAdminChildren().find((r) => {
+    const fullPath = ADMIN_PREFIX + '/' + r.path
+    return fullPath === path || matchRoutePattern(fullPath, path)
+  })
+}
+
+/**
+ * 解析当前路径对应的 Tab 路径。
+ * - 若路径匹配到某个 admin 子路由（含非菜单路由如编辑页），返回路径本身作为独立 Tab
+ * - 否则回退到父级菜单路由
+ */
 function resolveTabPath(currentPath: string): string | null {
+  // 优先检查是否匹配独立子路由
+  if (findAdminRoute(currentPath)) return currentPath
+  // 回退：查找父级菜单路由
   for (const r of getMenuRoutes()) {
     const fullPath = ADMIN_PREFIX + '/' + r.path
-    if (currentPath === fullPath) return fullPath
     if (currentPath.startsWith(fullPath + '/')) return fullPath
+  }
+  return null
+}
+
+/** 解析路径对应的菜单路由路径，用于侧边栏高亮 */
+function resolveMenuPath(path: string): string | null {
+  for (const r of getMenuRoutes()) {
+    const fullPath = ADMIN_PREFIX + '/' + r.path
+    if (path === fullPath) return fullPath
+    if (path.startsWith(fullPath + '/')) return fullPath
   }
   return null
 }
@@ -35,23 +66,27 @@ function buildInitialTabs(): TabItem[] {
   return [{ path: '/admin/dashboard', title, closable: false }]
 }
 
-export { resolveTabPath, getAdminChildren, getMenuRoutes }
+export { resolveTabPath, resolveMenuPath, getAdminChildren, getMenuRoutes, findAdminRoute }
 
 export const useAdminTabsStore = defineStore('adminTabs', () => {
   const tabs = ref<TabItem[]>(buildInitialTabs())
   const activeTabPath = ref('/admin/dashboard')
 
   function openTab(path: string) {
-    const menuRoutes = getMenuRoutes()
-    const matched = menuRoutes.find((r) => ADMIN_PREFIX + '/' + r.path === path)
-    if (!matched) return
-
+    // 已存在则直接激活
     if (tabs.value.some((t) => t.path === path)) {
       activeTabPath.value = path
       return
     }
 
-    const title = (matched.meta?.menuTitle as string) || (matched.name as string) || path
+    const matched = findAdminRoute(path)
+    if (!matched) return
+
+    const title =
+      (matched.meta?.tabTitle as string) ||
+      (matched.meta?.menuTitle as string) ||
+      (matched.name as string) ||
+      path
     const closable = (matched.meta?.tabClosable as boolean) ?? true
     tabs.value.push({ path, title, closable })
     activeTabPath.value = path

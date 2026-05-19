@@ -47,13 +47,25 @@ const adminRoutes: RouteRecordRaw[] = [
         path: 'posts/new',
         name: '创建文章',
         component: () => import('@/pages/admin/PostEditPage.vue'),
-        meta: { requiresAuth: true, requiredRole: 'admin', menuVisible: false },
+        meta: {
+          requiresAuth: true,
+          requiredRole: 'admin',
+          menuVisible: false,
+          keepAlive: true,
+          componentName: 'PostEditPage',
+        },
       },
       {
         path: 'posts/:id/edit',
         name: '编辑文章',
         component: () => import('@/pages/admin/PostEditPage.vue'),
-        meta: { requiresAuth: true, requiredRole: 'admin', menuVisible: false },
+        meta: {
+          requiresAuth: true,
+          requiredRole: 'admin',
+          menuVisible: false,
+          keepAlive: true,
+          componentName: 'PostEditPage',
+        },
       },
       {
         path: 'tags',
