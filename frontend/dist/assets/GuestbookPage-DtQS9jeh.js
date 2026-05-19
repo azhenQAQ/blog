@@ -1,0 +1,1 @@
+import{A as e,C as t,q as n}from"./vue.runtime.esm-bundler--oTawntF.js";import{t as r}from"./CommentSection-aiKF1Ivl.js";var i=e({__name:`GuestbookPage`,setup(e){return(e,i)=>(n(),t(r,{type:`guestbook`}))}});export{i as default};

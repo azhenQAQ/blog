@@ -1,0 +1,1 @@
+var e={DRAFT:0,PUBLISHED:1,ARCHIVED:2},t={[e.DRAFT]:`草稿`,[e.PUBLISHED]:`已发布`,[e.ARCHIVED]:`已归档`};export{t as n,e as t};

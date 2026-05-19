@@ -1,0 +1,1 @@
+import{gt as e}from"./vue.runtime.esm-bundler--oTawntF.js";import{y as t}from"./index-Dh8C0oIN.js";var n=t(`toc`,()=>{let t=e([]),n=e(``);function r(e){t.value=e,n.value=``}function i(e){n.value=e}function a(){t.value=[],n.value=``}return{headings:t,activeId:n,setHeadings:r,setActiveId:i,clear:a}});export{n as t};
