@@ -16,6 +16,13 @@ const tools: Tool[] = [
     external: false,
   },
   {
+    id: 'json-formatter',
+    name: 'JSON 格式化',
+    desc: 'JSON 美化、压缩、校验与转义处理，支持语法高亮与树形浏览',
+    path: '/tools/json-formatter',
+    external: false,
+  },
+  {
     id: 'ai-code',
     name: 'AI零代码应用生成平台',
     desc: '一句话，一键生成应用',

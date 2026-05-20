@@ -92,6 +92,12 @@ src/
 - admin 端**禁止**引用 `theme.css` / `form.css` 中的自定义变量，两套变量互不混用
 - admin 端暗色模式由 Element Plus 自身的 CSS 变量体系自动适配，无需额外配置
 
+### 奇思妙想模块规范
+
+- **路由**：所有工具必须注册为顶层独立路由（在 `router/index.ts` 中，非 BlogLayout 子路由），以新标签页/独立页面形式打开
+- **样式**：所有工具页面的样式必须写在对应 `.vue` 文件的 `<style scoped>` 内部，禁止引入外部样式文件
+- 工具页面需自包含完整布局（Header + 内容区），参考 `ImageProcessPage.vue` 的模式
+
 ## 禁止事项
 
 - 禁止执行 `npm run dev`、`npm run build`、`npm run lint` 等 npm 脚本命令，这些由用户手动执行

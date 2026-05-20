@@ -86,6 +86,12 @@ const socialLinks = [
     external: true,
   },
   {
+    name: '个人主页',
+    url: 'http://azhenna.top',
+    icon: '/images/me-page.png',
+    external: true,
+  },
+  {
     name: 'Email',
     url: 'mailto:2319969434@qq.com',
     icon: '/images/email.png',
@@ -286,7 +292,9 @@ const socialLinks = [
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .social-link:hover {
@@ -299,10 +307,6 @@ const socialLinks = [
   height: 100%;
   object-fit: contain;
   display: block;
-}
-
-[data-theme='dark'] .social-link {
-  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Announcement */

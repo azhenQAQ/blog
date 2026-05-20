@@ -14,6 +14,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '图片处理' },
   },
   {
+    path: '/tools/json-formatter',
+    name: 'JSON 格式化',
+    component: () => import('@/pages/tools/JsonFormatterPage.vue'),
+    meta: { title: 'JSON 格式化' },
+  },
+  {
     path: '/login',
     name: '登录',
     component: () => import('@/pages/blog/LoginPage.vue'),
