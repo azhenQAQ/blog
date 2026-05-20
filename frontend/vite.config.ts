@@ -15,9 +15,11 @@ export default defineConfig({
   build: {
     sourcemap: false,
     cssCodeSplit: false,
+    cssFileName: 'app',
     rollupOptions: {
       output: {
         inlineDynamicImports: true,
+        entryFileNames: 'app.js',
       },
     },
   },
