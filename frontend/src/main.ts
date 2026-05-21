@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { useMusicStore } from '@/stores/music'
 import '@fontsource/oswald/500.css'
 import '@fontsource/oswald/700.css'
 import '@fontsource/inter/400.css'
@@ -29,9 +30,13 @@ const dark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches
 document.documentElement.dataset.theme = dark ? 'dark' : 'light'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
+
+// 初始化音乐播放器歌单
+useMusicStore().fetchPlaylist()
 VueMarkdownEditor.use(githubTheme, {
   Hljs: hljs,
 })

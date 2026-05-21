@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS `article`;
 DROP TABLE IF EXISTS `attachment`;
 DROP TABLE IF EXISTS `friend_link`;
 DROP TABLE IF EXISTS `tag`;
+DROP TABLE IF EXISTS `music`;
 DROP TABLE IF EXISTS `user`;
 
 -- -----------------------------------------------------------
@@ -129,7 +130,26 @@ CREATE TABLE IF NOT EXISTS `article_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章标签关联表';
 
 -- -----------------------------------------------------------
--- 7. 评论/留言表 (comment)
+-- 7. 音乐表 (music)
+-- -----------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `music` (
+    `id`         BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `title`      VARCHAR(255) NOT NULL COMMENT '歌曲名',
+    `artist`     VARCHAR(255) DEFAULT '' COMMENT '歌手名',
+    `cover_url`  VARCHAR(500) DEFAULT '' COMMENT '封面图片URL',
+    `audio_url`  VARCHAR(500) NOT NULL COMMENT '音频文件URL',
+    `lrc_url`    VARCHAR(500) DEFAULT '' COMMENT 'LRC歌词文件URL',
+    `duration`   INT          DEFAULT 0 COMMENT '时长(秒)',
+    `sort_order` INT          DEFAULT 0 COMMENT '排序(越小越前)',
+    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at` DATETIME     DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_sort_order` (`sort_order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='音乐表';
+
+-- -----------------------------------------------------------
+-- 8. 评论/留言表 (comment)
 -- -----------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `comment` (
     `id`            BIGINT       NOT NULL AUTO_INCREMENT  COMMENT '主键',

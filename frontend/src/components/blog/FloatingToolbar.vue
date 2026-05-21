@@ -2,11 +2,14 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { useUserStore } from '@/stores/user'
+import { useMusicStore } from '@/stores/music'
 import { useConfirm } from '@/composables/useConfirm'
 import { useSnackbar } from '@/composables/useSnackbar'
+import SvgIcon from '@/components/common/SvgIcon.vue'
 
 const themeStore = useThemeStore()
 const userStore = useUserStore()
+const musicStore = useMusicStore()
 const { showConfirm } = useConfirm()
 const { showMessage } = useSnackbar()
 
@@ -111,6 +114,13 @@ onUnmounted(() => {
           :src="themeStore.isDark ? '/images/day-mode.png' : '/images/night-mode.png'"
           alt="主题切换"
         />
+      </button>
+      <button
+        class="tool-btn"
+        :title="musicStore.autoPlayEnabled ? '关闭自动播放' : '开启自动播放'"
+        @click="musicStore.toggleAutoPlay()"
+      >
+        <SvgIcon :name="musicStore.autoPlayEnabled ? 'pause' : 'play'" :size="16" />
       </button>
       <button
         v-if="userStore.isLogin"

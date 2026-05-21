@@ -103,6 +103,18 @@ const adminRoutes: RouteRecordRaw[] = [
           componentName: 'AttachmentManagePage',
         },
       },
+      {
+        path: 'music',
+        name: '音乐管理',
+        component: () => import('@/pages/admin/MusicManagePage.vue'),
+        meta: {
+          requiresAuth: true,
+          requiredRole: 'admin',
+          icon: 'Headset',
+          keepAlive: true,
+          componentName: 'MusicManagePage',
+        },
+      },
     ],
   },
 ]

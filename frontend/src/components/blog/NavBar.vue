@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import MusicPlayer from '@/components/blog/MusicPlayer.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -48,6 +49,7 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
       </div>
 
       <div class="nav-actions">
+        <MusicPlayer />
         <button class="menu-toggle" @click="menuOpen = !menuOpen">
           <span></span>
           <span></span>
@@ -127,7 +129,7 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .menu-toggle {

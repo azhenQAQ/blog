@@ -12,6 +12,7 @@ import {
   PriceTag,
   ChatDotSquare,
   Folder,
+  Headset,
 } from '@element-plus/icons-vue'
 import TabBar from '@/components/admin/TabBar.vue'
 
@@ -31,6 +32,7 @@ const iconMap: Record<string, unknown> = {
   PriceTag,
   ChatDotSquare,
   Folder,
+  Headset,
 }
 
 const menuRoutes = computed(() => getMenuRoutes())
