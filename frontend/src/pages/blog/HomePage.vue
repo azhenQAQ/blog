@@ -60,7 +60,12 @@ onMounted(() => fetchData(1))
   <div class="home">
     <!-- 置顶文章 -->
     <section v-if="topArticles.length" class="post-list">
-      <h2 class="section-title">📌 置顶文章</h2>
+      <h2 class="section-title">
+        <svg t="1779693614419" class="icon pin-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5106" width="24" height="24">
+          <path d="M576 452.266667v422.4h-85.333333v-422.4l-89.6 89.6L341.333333 477.866667l192-192 192 192-59.733333 59.733333-89.6-85.333333z m213.333333-217.6h-512v-85.333334h512v85.333334z" fill="#D92662" p-id="5107"></path>
+        </svg>
+        置顶文章
+      </h2>
       <article
         v-for="(post, idx) in topArticles"
         :key="post.id"
@@ -164,6 +169,13 @@ onMounted(() => fetchData(1))
   border-left: 6px solid var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pin-icon {
+  flex-shrink: 0;
 }
 
 /* Post card */
