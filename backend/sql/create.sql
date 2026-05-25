@@ -191,3 +191,7 @@ CREATE TABLE IF NOT EXISTS `visit_record` (
     KEY `idx_article_id` (`article_id`),
     KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='网站访问记录表';
+
+ALTER TABLE `visit_record`
+    ADD COLUMN `location`        VARCHAR(100) DEFAULT NULL COMMENT 'IP地理位置'  AFTER `article_id`,
+    ADD COLUMN `browser_summary` VARCHAR(100) DEFAULT NULL COMMENT '浏览器摘要'   AFTER `location`;

@@ -133,10 +133,22 @@ onMounted(() => {
           </template>
         </el-table-column>
         <el-table-column prop="ip" label="IP" width="140" />
+        <el-table-column label="地理位置" width="150" align="center">
+          <template #default="{ row }">
+            {{ row.location ?? '—' }}
+          </template>
+        </el-table-column>
         <el-table-column label="User-Agent" min-width="200">
           <template #default="{ row }">
             <el-tooltip :content="row.userAgent ?? '—'" placement="top">
               <span>{{ truncate(row.userAgent, 40) }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column label="浏览器摘要" min-width="200">
+          <template #default="{ row }">
+            <el-tooltip :content="row.browserSummary ?? '—'" placement="top">
+              <span>{{ row.browserSummary ?? '—' }}</span>
             </el-tooltip>
           </template>
         </el-table-column>

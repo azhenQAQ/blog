@@ -51,6 +51,18 @@ public class VisitRecord implements Serializable {
     @TableField(value = "article_id")
     private Long articleId;
 
+    /**
+     * IP 地理位置
+     */
+    @TableField(value = "location")
+    private String location;
+
+    /**
+     * 浏览器摘要（浏览器+版本 / 操作系统 / 设备类型）
+     */
+    @TableField(value = "browser_summary")
+    private String browserSummary;
+
     private Date createdAt;
 
     private Date updatedAt;

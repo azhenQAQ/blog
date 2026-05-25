@@ -6,6 +6,10 @@ export interface VisitRecordVO {
   userAgent: string | null
   referer: string | null
   articleId: number | null
+  /** IP 地理位置 */
+  location: string | null
+  /** 浏览器摘要（浏览器+版本 / 操作系统 / 设备类型） */
+  browserSummary: string | null
   createdAt: string
 }
 

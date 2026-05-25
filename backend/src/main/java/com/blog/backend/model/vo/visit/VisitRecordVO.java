@@ -23,6 +23,12 @@ public class VisitRecordVO implements Serializable {
 
     private Long articleId;
 
+    /** IP 地理位置 */
+    private String location;
+
+    /** 浏览器摘要（浏览器+版本 / 操作系统 / 设备类型） */
+    private String browserSummary;
+
     private Date createdAt;
 
     @Serial

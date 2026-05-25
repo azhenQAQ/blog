@@ -1,9 +1,12 @@
 package com.blog.backend.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.useragent.UserAgent;
+import cn.hutool.http.useragent.UserAgentUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.blog.backend.common.IpRegionUtil;
 import com.blog.backend.mapper.VisitRecordMapper;
 import com.blog.backend.model.dto.visit.VisitRecordQueryRequest;
 import com.blog.backend.model.entity.VisitRecord;
@@ -25,6 +28,9 @@ public class VisitRecordServiceImpl extends ServiceImpl<VisitRecordMapper, Visit
 
     private static final Pattern ARTICLE_PATH_PATTERN = Pattern.compile("^/api/article/public/(\\d+)$");
 
+    @Resource
+    private IpRegionUtil ipRegionUtil;
+
     @Override
     public void recordVisit(String path, String ip, String userAgent, String referer) {
         VisitRecord record = new VisitRecord();
@@ -38,6 +44,12 @@ public class VisitRecordServiceImpl extends ServiceImpl<VisitRecordMapper, Visit
         if (articleId != null) {
             record.setArticleId(articleId);
         }
+
+        // 解析 IP 地理位置
+        record.setLocation(ipRegionUtil.search(ip));
+
+        // 解析 User-Agent 获取浏览器摘要
+        record.setBrowserSummary(parseBrowserSummary(userAgent));
 
         this.save(record);
     }
@@ -64,6 +76,8 @@ public class VisitRecordServiceImpl extends ServiceImpl<VisitRecordMapper, Visit
         vo.setUserAgent(visitRecord.getUserAgent());
         vo.setReferer(visitRecord.getReferer());
         vo.setArticleId(visitRecord.getArticleId());
+        vo.setLocation(visitRecord.getLocation());
+        vo.setBrowserSummary(visitRecord.getBrowserSummary());
         vo.setCreatedAt(visitRecord.getCreatedAt());
         return vo;
     }
@@ -94,6 +108,41 @@ public class VisitRecordServiceImpl extends ServiceImpl<VisitRecordMapper, Visit
             }
         }
         return null;
+    }
+
+    /**
+     * 解析 User-Agent 为浏览器摘要（浏览器+版本 / 操作系统 / 设备类型）
+     */
+    private String parseBrowserSummary(String userAgent) {
+        if (StrUtil.isBlank(userAgent)) {
+            return "Unknown / Unknown / Unknown";
+        }
+        try {
+            UserAgent ua = UserAgentUtil.parse(userAgent);
+            if (ua == null) {
+                return "Unknown / Unknown / Unknown";
+            }
+
+            String browser = ua.getBrowser() != null ? ua.getBrowser().getName() : "Unknown";
+            String version = ua.getVersion();
+            String browserStr;
+            if (StrUtil.isNotBlank(browser) && !"Unknown".equals(browser)
+                    && StrUtil.isNotBlank(version)) {
+                String mainVer = version.contains(".") ? version.split("\\.")[0] : version;
+                browserStr = browser + " " + mainVer;
+            } else if (StrUtil.isNotBlank(browser) && !"Unknown".equals(browser)) {
+                browserStr = browser;
+            } else {
+                browserStr = "Unknown";
+            }
+
+            String os = ua.getOs() != null ? ua.getOs().getName() : "Unknown";
+            String platform = ua.getPlatform() != null ? ua.getPlatform().getName() : "Unknown";
+
+            return browserStr + " / " + os + " / " + platform;
+        } catch (Exception e) {
+            return "Unknown / Unknown / Unknown";
+        }
     }
 
     /**

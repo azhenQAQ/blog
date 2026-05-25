@@ -33,6 +33,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 前端 CSS 主题系统：`data-theme="light|dark"` 切换，初始化时检测系统偏好
 - 前端路径别名 `@` → `./src`
 
+## 数据库变更规则
+
+- **已有表的字段变更（新增/修改）必须使用 `ALTER TABLE` 语句追加在 `create.sql` 文件末尾**，禁止修改原有的 `CREATE TABLE` 语句
+
 ## 禁止事项
 
 - **禁止**主动执行构建/编译/打包命令（Maven、npm run build 等）
