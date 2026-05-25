@@ -63,3 +63,9 @@ blog:
     allowed-extensions: jpg,jpeg,png,gif,webp,svg,bmp,pdf,doc,docx,xls,xlsx,ppt,pptx,md,txt,csv,zip,rar,mp3,mp4,avi,mov
     thumbnail-width: 200
     thumbnail-height: 200
+
+############## 百度翻译 API 配置 ##############
+translate:
+  baidu:
+    app-id:
+    key:

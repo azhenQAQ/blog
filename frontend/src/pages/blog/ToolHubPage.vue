@@ -23,6 +23,13 @@ const tools: Tool[] = [
     external: false,
   },
   {
+    id: 'translate',
+    name: '翻译',
+    desc: '中英文双向翻译，支持单词、短语翻译与英文原文朗读',
+    path: '/tools/translate',
+    external: false,
+  },
+  {
     id: 'ai-code',
     name: 'AI零代码应用生成平台',
     desc: '一句话，一键生成应用',

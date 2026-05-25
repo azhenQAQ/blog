@@ -20,6 +20,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'JSON 格式化' },
   },
   {
+    path: '/tools/translate',
+    name: '翻译',
+    component: () => import('@/pages/blog/tools/TranslatePage.vue'),
+    meta: { title: '翻译' },
+  },
+  {
     path: '/login',
     name: '登录',
     component: () => import('@/pages/blog/LoginPage.vue'),
