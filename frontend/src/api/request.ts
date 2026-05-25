@@ -23,6 +23,7 @@ request.interceptors.response.use(
       useUserStore().clearLoginState()
       ElMessage({ message: '登录过期，请重新登录', type: 'warning', duration: 1500 })
       setTimeout(() => router.push('/login'), 1500)
+      return
     }
     return Promise.reject(new Error(message || '请求失败'))
   },

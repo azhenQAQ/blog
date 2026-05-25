@@ -10,13 +10,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tools/image-process',
     name: '图片处理',
-    component: () => import('@/pages/tools/ImageProcessPage.vue'),
+    component: () => import('@/pages/blog/tools/ImageProcessPage.vue'),
     meta: { title: '图片处理' },
   },
   {
     path: '/tools/json-formatter',
     name: 'JSON 格式化',
-    component: () => import('@/pages/tools/JsonFormatterPage.vue'),
+    component: () => import('@/pages/blog/tools/JsonFormatterPage.vue'),
     meta: { title: 'JSON 格式化' },
   },
   {

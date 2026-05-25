@@ -391,7 +391,6 @@ function handleTreeClick(e: MouseEvent) {
 <template>
   <div class="json-tool">
     <div class="tool-header">
-      <router-link to="/tools" class="back-link">← 返回奇思妙想</router-link>
       <div class="header-right">
         <button class="btn-action" @click="clearInput" :disabled="!inputText">清空</button>
       </div>
@@ -555,17 +554,6 @@ function handleTreeClick(e: MouseEvent) {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
-}
-
-.back-link {
-  font-size: 0.92em;
-  color: var(--t-text-secondary);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.back-link:hover {
-  color: var(--t-accent);
 }
 
 .header-right {

@@ -582,7 +582,6 @@ onUnmounted(() => {
     <!-- Header -->
     <header class="tool-header">
       <h1 class="tool-logo">图片处理</h1>
-      <a href="/" class="back-link">← 返回首页</a>
     </header>
 
     <!-- Upload Zone -->
@@ -821,17 +820,6 @@ onUnmounted(() => {
   color: var(--t-text);
   margin: 0;
   letter-spacing: -0.01em;
-}
-
-.back-link {
-  font-size: 0.9em;
-  color: var(--t-text-secondary);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.back-link:hover {
-  color: var(--t-accent);
 }
 
 /* ===================== Upload Zone ===================== */

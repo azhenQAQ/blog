@@ -44,26 +44,15 @@ const tools: Tool[] = [
     <p class="page-subtitle">个人工具集，让日常开发中的小需求变得简单高效</p>
 
     <div class="tools-grid">
-      <router-link
-        v-for="tool in tools.filter((t) => !t.external)"
-        :key="tool.id"
-        :to="tool.path"
-        class="tool-card"
-      >
-        <h3 class="tool-name">{{ tool.name }}</h3>
-        <p class="tool-desc">{{ tool.desc }}</p>
-        <span class="tool-arrow">→</span>
-      </router-link>
-
       <a
-        v-for="tool in tools.filter((t) => t.external)"
+        v-for="tool in tools"
         :key="tool.id"
         :href="tool.path"
         target="_blank"
         rel="noopener noreferrer"
         class="tool-card"
       >
-        <h3 class="tool-name">{{ tool.name }} ↗</h3>
+        <h3 class="tool-name">{{ tool.name }}{{ tool.external ? ' ↗' : '' }}</h3>
         <p class="tool-desc">{{ tool.desc }}</p>
         <span class="tool-arrow">→</span>
       </a>
