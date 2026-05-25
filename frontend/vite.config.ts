@@ -15,11 +15,18 @@ export default defineConfig({
   build: {
     sourcemap: false,
     cssCodeSplit: false,
-    cssFileName: 'app',
     rollupOptions: {
       output: {
         inlineDynamicImports: true,
         entryFileNames: 'app.js',
+        // Vite 8 中 cssFileName 仅对 library 模式有效，此处用 assetFileNames 函数
+        // 将默认的 style.css 改为 app.css
+        assetFileNames: (chunkInfo) => {
+          if (chunkInfo.names?.some((n) => n.endsWith('.css'))) {
+            return 'app.css'
+          }
+          return 'assets/[name]-[hash][extname]'
+        },
       },
     },
   },
