@@ -170,3 +170,24 @@ CREATE TABLE IF NOT EXISTS `comment` (
     KEY `idx_parent_id` (`parent_id`),
     KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评论/留言表';
+
+-- -----------------------------------------------------------
+-- 9. 访问记录表 (visit_record)
+-- -----------------------------------------------------------
+DROP TABLE IF EXISTS `visit_record`;
+CREATE TABLE IF NOT EXISTS `visit_record` (
+    `id`          BIGINT       NOT NULL AUTO_INCREMENT  COMMENT '主键',
+    `path`        VARCHAR(500) NOT NULL                  COMMENT '访问路径',
+    `ip`          VARCHAR(50)  DEFAULT NULL              COMMENT '访问者IP',
+    `user_agent`  VARCHAR(500) DEFAULT NULL              COMMENT '浏览器User-Agent',
+    `referer`     VARCHAR(500) DEFAULT NULL              COMMENT '来源地址',
+    `article_id`  BIGINT       DEFAULT NULL              COMMENT '关联文章ID',
+    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '访问时间',
+    `updated_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at`  DATETIME     DEFAULT NULL              COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_path` (`path`(100)),
+    KEY `idx_ip` (`ip`),
+    KEY `idx_article_id` (`article_id`),
+    KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='网站访问记录表';

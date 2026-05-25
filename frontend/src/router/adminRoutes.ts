@@ -92,6 +92,18 @@ const adminRoutes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'visitRecords',
+        name: '访问记录',
+        component: () => import('@/pages/admin/VisitRecordManagePage.vue'),
+        meta: {
+          requiresAuth: true,
+          requiredRole: 'admin',
+          icon: 'Monitor',
+          keepAlive: true,
+          componentName: 'VisitRecordManagePage',
+        },
+      },
+      {
         path: 'attachments',
         name: '附件库',
         component: () => import('@/pages/admin/AttachmentManagePage.vue'),

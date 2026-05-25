@@ -13,6 +13,7 @@ import {
   ChatDotSquare,
   Folder,
   Headset,
+  Monitor,
 } from '@element-plus/icons-vue'
 import TabBar from '@/components/admin/TabBar.vue'
 
@@ -33,6 +34,7 @@ const iconMap: Record<string, unknown> = {
   ChatDotSquare,
   Folder,
   Headset,
+  Monitor,
 }
 
 const menuRoutes = computed(() => getMenuRoutes())
