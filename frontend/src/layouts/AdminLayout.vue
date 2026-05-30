@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, watch, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useAdminTabsStore, resolveTabPath, resolveMenuPath, getMenuRoutes, findAdminRoute } from '@/stores/adminTabs'
@@ -81,6 +81,12 @@ function handleLogout() {
   userStore.logout()
   router.push('/login')
 }
+
+// 浏览器刷新后重置所有 Tab 并回到控制台
+onMounted(() => {
+  tabStore.reset()
+  router.replace('/admin/dashboard')
+})
 
 // 修改密码
 const passwordVisible = ref(false)

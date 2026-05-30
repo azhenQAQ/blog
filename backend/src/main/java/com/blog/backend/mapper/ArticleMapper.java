@@ -9,6 +9,9 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ArticleMapper extends BaseMapper<Article> {
 
     /**
@@ -52,4 +55,16 @@ public interface ArticleMapper extends BaseMapper<Article> {
      */
     @Select("SELECT * FROM article WHERE status = 1 AND is_top = 0 AND created_at > #{createdAt} ORDER BY created_at ASC LIMIT 1")
     Article selectNextPublished(@Param("createdAt") java.time.LocalDateTime createdAt);
+
+    /**
+     * 查询所有文章的总浏览量（排除逻辑删除）
+     */
+    @Select("SELECT COALESCE(SUM(view_count), 0) FROM article WHERE deleted_at IS NULL")
+    Integer selectTotalViewCount();
+
+    /**
+     * 按状态分组统计文章数（排除逻辑删除）
+     */
+    @Select("SELECT status, COUNT(*) AS cnt FROM article WHERE deleted_at IS NULL GROUP BY status")
+    List<Map<String, Object>> selectArticleCountGroupByStatus();
 }
