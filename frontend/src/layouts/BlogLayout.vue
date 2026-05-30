@@ -7,6 +7,7 @@ import ParticleBg from '@/components/blog/ParticleBg.vue'
 import FloatingToolbar from '@/components/blog/FloatingToolbar.vue'
 import SnackbarContainer from '@/components/blog/SnackbarContainer.vue'
 import ConfirmDialog from '@/components/blog/ConfirmDialog.vue'
+import Live2DWidget from '@/components/blog/Live2DWidget.vue'
 
 const route = useRoute()
 const mobileSidebarOpen = ref(false)
@@ -46,6 +47,7 @@ watch(
     <FloatingToolbar />
     <SnackbarContainer />
     <ConfirmDialog />
+    <Live2DWidget />
   </div>
 </template>
 
